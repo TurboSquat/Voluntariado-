@@ -379,16 +379,25 @@ function formatDate(d){if(!d)return'';const p=d.split('-');return p[2]+'/'+p[1]+
 function nextId(k){const d=getData(k);return d.length?Math.max(...d.map(x=>x.id))+1:1;}
 
 function initDB(){
-    if(getData('users').length)return;
-    setData('users',[
-        {id:1,nome:'Administrador',email:'admin@voluntariado.pt',password:'admin123',perfil:'administrador',ativo:true},
-        {id:2,nome:'Santa Casa da Misericordia',email:'instituicao@email.pt',password:'inst123',perfil:'instituicao',ativo:true},
-        {id:3,nome:'Maria Santos',email:'voluntario@email.pt',password:'vol123',perfil:'voluntario',ativo:true}
-    ]);
-    setData('instituicoes',[]);
-    setData('voluntarios',[]);
-    setData('oportunidades',[]);
-    setData('inscricoes',[]);
+    let users=getData('users');
+    if(!users.length){
+        users=[
+            {id:1,nome:'Administrador',email:'admin@voluntariado.pt',password:'admin123',perfil:'administrador',ativo:true},
+            {id:2,nome:'Santa Casa da Misericordia',email:'instituicao@email.pt',password:'inst123',perfil:'instituicao',ativo:true},
+            {id:3,nome:'Maria Santos',email:'voluntario@email.pt',password:'vol123',perfil:'voluntario',ativo:true}
+        ];
+        setData('users',users);
+    }
+    let insts=getData('instituicoes');
+    if(!insts.find(i=>i.userId===2)){
+        insts.push({id:nextId('instituicoes'),userId:2,nome:'Santa Casa da Misericordia',nif:'500000001',tipo:'IPSS',email:'instituicao@email.pt',telefone:'278600000',pessoaContacto:'Dr. Manuel',descricao:'Instituicao de solidariedade social.',estadoValidacao:'aprovada'});
+        setData('instituicoes',insts);
+    }
+    let vols=getData('voluntarios');
+    if(!vols.find(v=>v.userId===3)){
+        vols.push({id:nextId('voluntarios'),userId:3,telefone:'912345678',localidade:'Boticas'});
+        setData('voluntarios',vols);
+    }
 }
 
 function resetDB(){
@@ -909,6 +918,36 @@ function showCriarOportunidade(){
             '<button class="btn btn-secondary" onclick="renderInstDashboard()">Cancelar</button></div>'+
         '</div></div></div>';
     document.getElementById('instOportunidades').innerHTML=html;
+}
+
+function criarOportunidade(e){
+    e.preventDefault();
+    const titulo=document.getElementById('criarTitulo').value.trim();
+    if(!titulo){alert('O título é obrigatório.');return;}
+    const inst=getInstByUserId(currentUser.id);
+    if(!inst)return;
+    const ops=getData('oportunidades');
+    ops.push({
+        id:nextId('oportunidades'),
+        instituicaoId:inst.id,
+        categoriaId:parseInt(document.getElementById('criarCat').value)||1,
+        titulo:titulo,
+        descricao:document.getElementById('criarDesc').value.trim(),
+        local:document.getElementById('criarLocal').value.trim(),
+        freguesia:document.getElementById('criarFreg').value.trim(),
+        horário:document.getElementById('criarHorario').value.trim(),
+        dataInicio:document.getElementById('criarDataInicio').value||null,
+        dataFim:document.getElementById('criarDataFim').value||null,
+        vagas:parseInt(document.getElementById('criarVagas').value)||1,
+        requisitos:document.getElementById('criarRequisitos').value.trim(),
+        competências:document.getElementById('criarComp').value.trim(),
+        idadeMinima:parseInt(document.getElementById('criarIdadeMin').value)||null,
+        estado:'rascunho',
+        criadaEm:new Date().toISOString()
+    });
+    setData('oportunidades',ops);
+    alert('Oportunidade criada! Aguarde aprovação do administrador.');
+    showPage('inst_dashboard');
 }
 
 function guardarNovaOportunidade(){
