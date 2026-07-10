@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma de Voluntariado Local</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root{--pri:#2563eb;--pri-d:#1d4ed8;--pri-l:#eff6ff;--ok:#16a34a;--ok-l:#f0fdf4;--warn:#ea580c;--warn-l:#fff7ed;--err:#dc2626;--err-l:#fef2f2;--txt:#1e293b;--txt2:#64748b;--bg:#f8fafc;--radius:10px;--shadow:0 1px 3px rgba(0,0,0,.08)}
+        *{box-sizing:border-box}
+        body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);margin:0;min-height:100vh;display:flex;flex-direction:column;font-size:15px}
+        .page{display:none}.page.active{display:block}
+
+        nav{background:rgba(37,99,235,.95);padding:10px 0;position:sticky;top:0;z-index:100;backdrop-filter:blur(8px)}
+        nav .container{display:flex;align-items:center;justify-content:space-between;gap:8px}
+        nav .brand{color:#fff;font-weight:700;font-size:1rem;text-decoration:none;display:flex;align-items:center;gap:6px}
+        nav .nav-links{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+        nav .nav-links a{color:rgba(255,255,255,.85);text-decoration:none;padding:6px 12px;border-radius:6px;font-size:.85rem;transition:.15s}
+        nav .nav-links a:hover,nav .nav-links a.active{background:rgba(255,255,255,.2);color:#fff}
+        nav .nav-links .sep{width:1px;height:20px;background:rgba(255,255,255,.25);margin:0 2px}
+        .hamburger{display:none;background:none;border:none;color:#fff;font-size:1.4rem;cursor:pointer;padding:4px 8px}
+
+        @media(max-width:768px){
+            nav .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:var(--pri);padding:8px 16px;flex-direction:column;align-items:stretch;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+            nav .nav-links.open{display:flex}
+            nav .nav-links .sep{display:none}
+            nav .nav-links a{padding:10px 12px;font-size:.95rem}
+            .hamburger{display:block}
+            nav .nav-right{display:flex;align-items:center;gap:8px}
+        }
+
+        .hero{background:linear-gradient(rgba(37,99,235,.65),rgba(29,78,216,.75)),url("https://upload.wikimedia.org/wikipedia/commons/0/00/Boticas.jpg") center/cover no-repeat;color:#fff;padding:48px 0;text-align:center}
+        .hero h1{font-size:1.8rem;font-weight:700;margin-bottom:12px}
+        .hero p{font-size:1rem;opacity:.9;max-width:600px;margin:0 auto 24px}
+        .hero .btn-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+        .video-bg{width:100%;margin:24px 0}
+        .video-bg iframe{width:100%;aspect-ratio:16/9;border:none;border-radius:12px}
+
+        .card{border:none;box-shadow:var(--shadow);border-radius:var(--radius);overflow:hidden}
+        .stat-card{text-align:center;padding:24px 16px}
+        .stat-card h3{font-size:1.8rem;font-weight:700;color:var(--pri);margin:8px 0 4px}
+        .stat-card p{color:var(--txt2);font-size:.85rem;margin:0}
+
+        .form-label{font-weight:500;font-size:.85rem;color:var(--txt);margin-bottom:4px}
+        .form-control,.form-select{border-radius:8px;border:1px solid #e2e8f0;padding:10px 12px;font-size:.9rem}
+        .form-control:focus,.form-select:focus{border-color:var(--pri);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+
+        .btn{border-radius:8px;font-weight:600;padding:10px 20px;font-size:.9rem;transition:.15s}
+        .btn-pri{background:var(--pri);color:#fff;border:none}.btn-pri:hover{background:var(--pri-d);color:#fff}
+        .btn-ok{background:var(--ok);color:#fff;border:none}.btn-ok:hover{background:#15803d;color:#fff}
+        .btn-warn{background:var(--warn);color:#fff;border:none}.btn-warn:hover{background:#c2410c;color:#fff}
+        .btn-err{background:var(--err);color:#fff;border:none}.btn-err:hover{background:#b91c1c;color:#fff}
+        .btn-ghost{background:transparent;color:var(--pri);border:1px solid var(--pri)}.btn-ghost:hover{background:var(--pri-l)}
+        .btn-sm{padding:6px 12px;font-size:.8rem;border-radius:6px}
+
+        .alert-msg{padding:10px 14px;border-radius:8px;font-size:.85rem;display:flex;align-items:center;gap:8px;margin-bottom:16px}
+        .alert-msg.err{background:var(--err-l);color:var(--err);border:1px solid #fecaca}
+        .alert-msg.ok{background:var(--ok-l);color:var(--ok);border:1px solid #bbf7d0}
+        .alert-msg.warn{background:var(--warn-l);color:var(--warn);border:1px solid #fed7aa}
+
+        .badge{font-size:.75rem;padding:4px 8px;border-radius:6px;font-weight:500}
+        .badge-ok{background:var(--ok-l);color:var(--ok)}.badge-pri{background:var(--pri-l);color:var(--pri)}
+        .badge-warn{background:var(--warn-l);color:var(--warn)}.badge-err{background:var(--err-l);color:var(--err)}
+        .badge-gray{background:#f1f5f9;color:var(--txt2)}.badge-dark{background:#1e293b;color:#fff}
+
+        .container-narrow{max-width:480px;margin:0 auto}
+        .container-medium{max-width:720px;margin:0 auto}
+        footer{background:#1e293b;color:#94a3b8;padding:16px 0;margin-top:auto;text-align:center;font-size:.8rem}
+
+        .section-title{font-size:1.1rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+        .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+        table{width:100%;border-collapse:collapse;font-size:.85rem}
+        table th{text-align:left;padding:10px 12px;background:#f8fafc;font-weight:600;color:var(--txt2);border-bottom:2px solid #e2e8f0;white-space:nowrap}
+        table td{padding:10px 12px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+        table tr:hover td{background:#f8fafc}
+
+        .form-row{display:grid;gap:12px}
+        .form-row-2{grid-template-columns:1fr 1fr}
+        .form-row-3{grid-template-columns:1fr 1fr 1fr}
+        @media(max-width:576px){.form-row-2,.form-row-3{grid-template-columns:1fr}}
+
+        .tabs{display:flex;gap:4px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px}
+        .tabs .tab{padding:8px 16px;border-radius:8px;font-size:.85rem;font-weight:500;cursor:pointer;border:none;background:#f1f5f9;color:var(--txt2);white-space:nowrap}
+        .tabs .tab.active{background:var(--pri);color:#fff}
+
+        .card-compact{padding:16px}
+        .empty{text-align:center;padding:40px 16px;color:var(--txt2)}
+        .empty i{font-size:2rem;margin-bottom:8px;display:block}
+
+        .btn-group-toggle{display:flex;background:#f1f5f9;border-radius:8px;padding:3px;gap:2px}
+        .btn-group-toggle input{display:none}
+        .btn-group-toggle label{flex:1;text-align:center;padding:8px 12px;border-radius:6px;cursor:pointer;font-size:.85rem;font-weight:500;color:var(--txt2);transition:.15s}
+        .btn-group-toggle input:checked+label{background:#fff;color:var(--pri);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+
+        .form-check{font-size:.85rem}
+        .form-check-label{color:var(--txt2)}
+    </style>
+</head>
+<body>
+<nav>
+    <div class="container">
+        <a class="brand" href="#" onclick="showPage('home')"><i class="bi bi-heart-pulse"></i> Voluntariado</a>
+        <div class="nav-right">
+            <button class="hamburger" onclick="document.getElementById('navMenu').classList.toggle('open')">
+                <i class="bi bi-list"></i>
+            </button>
+            <div class="nav-links" id="navMenu">
+                <a href="#" onclick="showPage('home')">Inicio</a>
+                <a href="#" onclick="showPage('oportunidades')">Oportunidades</a>
+                <span class="sep"></span>
+                <a href="#" id="navAdmin" style="display:none" onclick="showPage('admin')">Admin</a>
+                <a href="#" id="navInst" style="display:none" onclick="showPage('inst_dashboard')">Instituicao</a>
+                <a href="#" id="navVol" style="display:none" onclick="showPage('vol_dashboard')">As Minhas Inscrições</a>
+                <span class="sep"></span>
+                <a href="#" id="navLogin" onclick="showPage('login')"><i class="bi bi-box-arrow-in-right"></i> Entrar</a>
+                <a href="#" id="navRegistar" onclick="showPage('registo')"><i class="bi bi-person-plus"></i> Registar</a>
+                <a href="#" id="navUser" style="display:none"><i class="bi bi-person-circle"></i> <span id="navUserName"></span></a>
+                <a href="#" id="navLogout" style="display:none" onclick="fazerLogout()"><i class="bi bi-box-arrow-right"></i> Sair</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main style="flex:1">
+
+<!-- HOME -->
+<div id="page-home" class="page active">
+    <div class="hero">
+        <div class="container">
+            <h1>Voluntariado na sua comunidade</h1>
+            <p>Encontre oportunidades de voluntariado perto de si ou ajude a sua organizacao a encontrar voluntarios.</p>
+            <div id="heroButtons" class="btn-row">
+                <a class="btn btn-pri" onclick="showPage('registo')" style="background:#fff;color:var(--pri)"><i class="bi bi-person-plus"></i> Sou Voluntario</a>
+                <a class="btn btn-ghost" style="border-color:rgba(255,255,255,.5);color:#fff" onclick="showPage('registo')"><i class="bi bi-building"></i> Sou Instituicao</a>
+            </div>
+        </div>
+    </div>
+    <div class="container" style="padding:24px 16px">
+        <div class="row mb-4" style="gap:12px">
+            <div class="col-md-4 mb-0"><div class="card stat-card"><i class="bi bi-calendar-check text-primary" style="font-size:1.5rem"></i><h3 id="statOportunidades">0</h3><p>Oportunidades</p></div></div>
+            <div class="col-md-4 mb-0"><div class="card stat-card"><i class="bi bi-building text-success" style="font-size:1.5rem"></i><h3 id="statInstituicoes">0</h3><p>Instituicoes</p></div></div>
+            <div class="col-md-4 mb-0"><div class="card stat-card"><i class="bi bi-people text-warning" style="font-size:1.5rem"></i><h3 id="statVoluntarios">0</h3><p>Voluntarios</p></div></div>
+        </div>
+        <h2 class="section-title"><i class="bi bi-star"></i> Destaques</h2>
+        <div class="row" id="oportunidadesDestaque"></div>
+        <div class="text-center" style="margin:24px 0">
+            <a class="btn btn-pri" onclick="showPage('oportunidades')">Ver Todas</a>
+        </div>
+        <div class="video-bg">
+            <iframe src="https://www.youtube.com/embed/4OHO6lp1cUY?rel=0" title="Voluntariado Boticas" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+<!-- LOGIN -->
+<div id="page-login" class="page">
+    <div class="container" style="padding:40px 16px">
+        <div class="container-narrow">
+            <div class="card card-compact">
+                <h3 style="text-align:center;margin-bottom:16px"><i class="bi bi-box-arrow-in-right"></i> Entrar</h3>
+                <div id="loginErro" class="alert-msg err" style="display:none"></div>
+                <form onsubmit="fazerLogin(event)">
+                    <div style="margin-bottom:12px"><label class="form-label">Email</label><input type="email" class="form-control" id="loginEmail" required></div>
+                    <div style="margin-bottom:16px"><label class="form-label">Password</label><input type="password" class="form-control" id="loginPass" required></div>
+                    <button type="submit" class="btn btn-pri" style="width:100%">Entrar</button>
+                </form>
+                <p style="text-align:center;margin-top:16px;font-size:.85rem;color:var(--txt2)">Nao tem conta? <a href="#" onclick="showPage('registo')" style="color:var(--pri);font-weight:600">Registar</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- REGISTO -->
+<div id="page-registo" class="page">
+    <div class="container" style="padding:40px 16px">
+        <div class="container-medium">
+            <div class="card card-compact">
+                <h3 style="text-align:center;margin-bottom:16px"><i class="bi bi-person-plus"></i> Criar Conta</h3>
+                <div class="btn-group-toggle" style="margin-bottom:16px">
+                    <input type="radio" name="tipoReg" id="regVol" value="voluntario" checked onchange="toggleRegForm()">
+                    <label for="regVol"><i class="bi bi-person"></i> Voluntario</label>
+                    <input type="radio" name="tipoReg" id="regInst" value="instituicao" onchange="toggleRegForm()">
+                    <label for="regInst"><i class="bi bi-building"></i> Instituicao</label>
+                </div>
+                <div id="regErro" class="alert-msg err" style="display:none"></div>
+                <form onsubmit="fazerRegisto(event)">
+                    <input type="hidden" id="regTipo" value="voluntario">
+
+                    <div id="camposVolReg">
+                        <div style="margin-bottom:12px"><label class="form-label">Nome completo *</label><input type="text" class="form-control" id="regNome" required></div>
+                        <div class="form-row form-row-2" style="margin-bottom:12px">
+                            <div><label class="form-label">Email *</label><input type="email" class="form-control" id="regEmail" required></div>
+                            <div><label class="form-label">Telefone *</label><input type="tel" class="form-control" id="regTelefone" required></div>
+                        </div>
+                        <div class="form-row form-row-2" style="margin-bottom:12px">
+                            <div><label class="form-label">Freguesia / Localidade *</label><input type="text" class="form-control" id="regLocalidade" required></div>
+                            <div><label class="form-label">Data Nascimento</label><input type="date" class="form-control" id="regDataNasc"></div>
+                        </div>
+                        <div style="margin-bottom:12px"><label class="form-label">Disponibilidade</label>
+                            <select class="form-select" id="regDisponibilidade">
+                                <option value="">Selecionar...</option>
+                                <option value="manhas">Manhas</option>
+                                <option value="tardes">Tardes</option>
+                                <option value="noites">Noites</option>
+                                <option value="fins_de_semana">Fins de Semana</option>
+                                <option value="flexivel">Flexivel</option>
+                            </select>
+                        </div>
+                        <div style="margin-bottom:12px"><label class="form-label">Areas de interesse</label>
+                            <div class="row" id="regInteresses"></div>
+                        </div>
+                        <div style="margin-bottom:12px"><label class="form-label">Competencias</label><input type="text" class="form-control" id="regCompetencias" placeholder="ex: primeiro socorro, informatica..."></div>
+                        <div class="form-row form-row-2" style="margin-bottom:12px">
+                            <div><label class="form-label">Password *</label><input type="password" class="form-control" id="regPass" required minlength="6"></div>
+                            <div><label class="form-label">Confirmar *</label><input type="password" class="form-control" id="regPass2" required></div>
+                        </div>
+                        <div style="margin-bottom:8px"><div class="form-check"><input class="form-check-input" type="checkbox" id="regConsentDados" required><label class="form-check-label" for="regConsentDados">Consinto o tratamento dos meus dados pessoais para fins de gestao de voluntariado, conforme a Politica de Privacidade (RGPD) *</label></div></div>
+                        <p style="font-size:.75rem;color:#94a3b8;margin-bottom:12px"><i class="bi bi-info-circle"></i> Os seus dados serao utilizados apenas para gestao de inscricoes e comunicacao relativa a oportunidades de voluntariado. Pode solicitar a eliminacao da sua conta a qualquer momento.</p>
+                        <div style="margin-bottom:16px"><div class="form-check"><input class="form-check-input" type="checkbox" id="regTermos" required><label class="form-check-label" for="regTermos">Aceito os Termos de Utilizacao *</label></div></div>
+                    </div>
+
+                    <div id="camposInstReg" style="display:none">
+                        <div style="margin-bottom:12px"><label class="form-label">Nome da Instituicao *</label><input type="text" class="form-control" id="regNomeInst" required></div>
+                        <div class="form-row form-row-2" style="margin-bottom:12px">
+                            <div><label class="form-label">NIF *</label><input type="text" class="form-control" id="regNif" maxlength="9" required></div>
+                            <div><label class="form-label">Tipo *</label>
+                                <select class="form-select" id="regTipoInst" required>
+                                    <option value="">Selecionar...</option>
+                                    <option>Associacao</option><option>IPSS</option><option>Escola</option>
+                                    <option>Junta de Freguesia</option><option>Municipio</option>
+                                    <option>Clube Desportivo</option><option>Outro</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="margin-bottom:12px"><label class="form-label">Email *</label><input type="email" class="form-control" id="regEmail" required></div>
+                        <div class="form-row form-row-2" style="margin-bottom:12px">
+                            <div><label class="form-label">Telefone</label><input type="tel" class="form-control" id="regTelefoneInst"></div>
+                            <div><label class="form-label">Pessoa de Contacto</label><input type="text" class="form-control" id="regContacto"></div>
+                        </div>
+                        <div style="margin-bottom:12px"><label class="form-label">Morada</label><input type="text" class="form-control" id="regMorada"></div>
+                        <div style="margin-bottom:12px"><label class="form-label">Descricao</label><textarea class="form-control" id="regDescInst" rows="2"></textarea></div>
+                        <div class="form-row form-row-2" style="margin-bottom:12px">
+                            <div><label class="form-label">Password *</label><input type="password" class="form-control" id="regPass" required minlength="6"></div>
+                            <div><label class="form-label">Confirmar *</label><input type="password" class="form-control" id="regPass2" required></div>
+                        </div>
+                        <div style="margin-bottom:16px"><div class="form-check"><input class="form-check-input" type="checkbox" id="regTermos" required><label class="form-check-label" for="regTermos">Aceito os Termos de Utilizacao *</label></div></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-pri" style="width:100%">Criar Conta</button>
+                </form>
+                <p style="text-align:center;margin-top:16px;font-size:.85rem;color:var(--txt2)">Ja tem conta? <a href="#" onclick="showPage('login')" style="color:var(--pri);font-weight:600">Entrar</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- OPORTUNIDADES -->
+<div id="page-oportunidades" class="page">
+    <div class="container" style="padding:24px 16px">
+        <h2 class="section-title"><i class="bi bi-search"></i> Oportunidades</h2>
+        <div class="card card-compact" style="margin-bottom:16px">
+            <div class="form-row form-row-3" style="margin-bottom:8px">
+                <input type="text" class="form-control" id="pesqQ" placeholder="Pesquisar..." oninput="filtrarOportunidades()">
+                <select class="form-select" id="pesqCat" onchange="filtrarOportunidades()"><option value="">Todas categorias</option></select>
+                <input type="text" class="form-control" id="pesqLoc" placeholder="Localidade" oninput="filtrarOportunidades()">
+            </div>
+        </div>
+        <div class="row" id="listaOportunidades"></div>
+    </div>
+</div>
+
+<!-- DETALHE -->
+<div id="page-detalhe" class="page">
+    <div class="container" style="padding:24px 16px">
+        <a class="btn btn-ghost btn-sm" onclick="showPage('oportunidades')" style="margin-bottom:12px"><i class="bi bi-arrow-left"></i> Voltar</a>
+        <div id="detalheConteudo"></div>
+    </div>
+</div>
+
+<!-- CRIAR OPORTUNIDADE -->
+<div id="page-criar" class="page">
+    <div class="container" style="padding:24px 16px">
+        <a class="btn btn-ghost btn-sm" onclick="showPage('inst_dashboard')" style="margin-bottom:12px"><i class="bi bi-arrow-left"></i> Voltar</a>
+        <h2 class="section-title"><i class="bi bi-plus-circle"></i> Nova Oportunidade</h2>
+        <div class="card card-compact">
+            <form onsubmit="criarOportunidade(event)">
+                <div style="margin-bottom:12px"><label class="form-label">Titulo *</label><input type="text" class="form-control" id="criarTitulo" required></div>
+                <div style="margin-bottom:12px"><label class="form-label">Categoria</label><select class="form-select" id="criarCat"></select></div>
+                <div style="margin-bottom:12px"><label class="form-label">Descricao</label><textarea class="form-control" id="criarDesc" rows="3"></textarea></div>
+                <div class="form-row form-row-3" style="margin-bottom:12px">
+                    <div><label class="form-label">Local</label><input type="text" class="form-control" id="criarLocal"></div>
+                    <div><label class="form-label">Freguesia</label><input type="text" class="form-control" id="criarFreg"></div>
+                    <div><label class="form-label">Horario</label><input type="text" class="form-control" id="criarHorario" placeholder="ex: Seg-Sex 9h-12h"></div>
+                </div>
+                <div class="form-row form-row-3" style="margin-bottom:12px">
+                    <div><label class="form-label">Data Inicio</label><input type="date" class="form-control" id="criarDataInicio"></div>
+                    <div><label class="form-label">Data Fim</label><input type="date" class="form-control" id="criarDataFim"></div>
+                    <div><label class="form-label">Vagas</label><input type="number" class="form-control" id="criarVagas" value="1" min="1"></div>
+                </div>
+                <div class="form-row form-row-2" style="margin-bottom:12px">
+                    <div><label class="form-label">Requisitos</label><input type="text" class="form-control" id="criarRequisitos" placeholder="ex: idade minima 18 anos"></div>
+                    <div><label class="form-label">Competencias</label><input type="text" class="form-control" id="criarComp" placeholder="ex: paciencia, trabalho em equipa"></div>
+                </div>
+                <div class="form-row form-row-2" style="margin-bottom:16px">
+                    <div><label class="form-label">Idade Minima</label><input type="number" class="form-control" id="criarIdadeMin" min="0" max="99"></div>
+                    <div><label class="form-label">Estado</label>
+                        <select class="form-select" id="criarEstado">
+                            <option value="rascunho">Rascunho</option>
+                            <option value="publicado">Publicado</option>
+                            <option value="inscricoes_abertas">Inscricoes Abertas</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-pri">Criar Oportunidade</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ADMIN -->
+<div id="page-admin" class="page">
+    <div class="container" style="padding:24px 16px">
+        <h2 class="section-title"><i class="bi bi-speedometer2"></i> Administracao</h2>
+        <div class="row mb-3" id="adminStats" style="gap:12px"></div>
+        <div id="adminPendentes"></div>
+        <div id="adminOpsPendentes"></div>
+        <h4 class="section-title" style="margin-top:24px"><i class="bi bi-list-check"></i> Ultimas Inscricoes</h4>
+        <div class="table-wrap" id="adminInscricoes"></div>
+    </div>
+</div>
+
+<!-- INSTITUICAO -->
+<div id="page-inst_dashboard" class="page">
+    <div class="container" style="padding:24px 16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+            <h2 class="section-title" style="margin:0"><i class="bi bi-building"></i> Minhas Oportunidades</h2>
+            <a class="btn btn-pri" onclick="showPage('criar')"><i class="bi bi-plus-lg"></i> Nova</a>
+        </div>
+        <div class="table-wrap" id="instOportunidades"></div>
+    </div>
+</div>
+
+<!-- INSCRITOS -->
+<div id="page-inscritos" class="page">
+    <div class="container" style="padding:24px 16px">
+        <a class="btn btn-ghost btn-sm" onclick="showPage('inst_dashboard')" style="margin-bottom:12px"><i class="bi bi-arrow-left"></i> Voltar</a>
+        <div id="inscritoConteudo"></div>
+    </div>
+</div>
+
+<!-- VOLUNTARIO -->
+<div id="page-vol_dashboard" class="page">
+    <div class="container" style="padding:24px 16px">
+        <h2 class="section-title"><i class="bi bi-list-check"></i> As Minhas Inscricoes</h2>
+        <div id="volInscricoes"></div>
+    </div>
+</div>
+
+</main>
+
+<footer>
+    <div class="container"><p style="margin:0">&copy; 2026 Plataforma de Voluntariado Local &nbsp;|&nbsp; <a href="#" onclick="resetDB()" style="color:#94a3b8">Reset Dados</a></p></div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+let currentUser = null;
+
+const CATEGORIAS = [
+    {id:1,nome:'Acao Social'},{id:2,nome:'Ambiente'},{id:3,nome:'Educacao'},
+    {id:4,nome:'Cultura'},{id:5,nome:'Desporto'},{id:6,nome:'Protecao Civil'},
+    {id:7,nome:'Apoio a Idosos'},{id:8,nome:'Eventos'},{id:9,nome:'Juventude'},
+    {id:10,nome:'Saude e Bem-Estar'}
+];
+
+function getData(k){return JSON.parse(localStorage.getItem(k)||'[]');}
+function setData(k,d){localStorage.setItem(k,JSON.stringify(d));}
+function formatDate(d){if(!d)return'';const p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
+function nextId(k){const d=getData(k);return d.length?Math.max(...d.map(x=>x.id))+1:1;}
+
+function initDB(){
+    if(getData('users').length)return;
+    setData('users',[
+        {id:1,nome:'Administrador',email:'admin@voluntariado.pt',password:'admin123',perfil:'administrador',ativo:true},
+        {id:2,nome:'Santa Casa da Misericordia',email:'instituicao@email.pt',password:'inst123',perfil:'instituicao',ativo:true},
+        {id:3,nome:'Maria Santos',email:'voluntario@email.pt',password:'vol123',perfil:'voluntario',ativo:true}
+    ]);
+    setData('instituicoes',[]);
+    setData('voluntarios',[]);
+    setData('oportunidades',[]);
+    setData('inscricoes',[]);
+}
+
+function resetDB(){
+    localStorage.clear();
+    location.reload();
+}
+
+function getUserByEmail(e){return getData('users').find(u=>u.email===e);}
+function getInstByUserId(uid){return getData('instituicoes').find(i=>i.userId===uid);}
+function getVolByUserId(uid){return getData('voluntarios').find(v=>v.userId===uid);}
+function getOportunidadeById(id){return getData('oportunidades').find(o=>o.id===id);}
+function getInscricoesByOp(id){return getData('inscricoes').filter(i=>i.oportunidadeId===id);}
+
+function statusBadge(estado){
+    const m={'rascunho':'badge-gray','publicado':'badge-pri','inscricoes_abertas':'badge-ok','encerradas':'badge-warn','concluida':'badge-dark','cancelada':'badge-err','pendente_aprovacao':'badge-warn'};
+    return '<span class="badge '+(m[estado]||'badge-gray')+'">'+estado.replace(/_/g,' ')+'</span>';
+}
+
+function showPage(p){
+    document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+    const el=document.getElementById('page-'+p);
+    if(el)el.classList.add('active');
+    document.getElementById('navMenu').classList.remove('open');
+    updateNav();
+    if(p==='home')renderHome();
+    if(p==='oportunidades')renderOportunidades();
+    if(p==='admin')renderAdmin();
+    if(p==='inst_dashboard')renderInstDashboard();
+    if(p==='vol_dashboard')renderVolDashboard();
+    if(p==='registo')carregarInteressesRegisto();
+}
+
+function updateNav(){
+    const l=currentUser!==null;
+    document.getElementById('navLogin').style.display=l?'none':'';
+    document.getElementById('navRegistar').style.display=l?'none':'';
+    document.getElementById('navUser').style.display=l?'':'none';
+    document.getElementById('navLogout').style.display=l?'':'none';
+    if(document.getElementById('heroButtons'))document.getElementById('heroButtons').style.display=l?'none':'';
+    if(l){
+        document.getElementById('navUserName').textContent=currentUser.nome;
+        document.getElementById('navAdmin').style.display=currentUser.perfil==='administrador'?'':'none';
+        document.getElementById('navInst').style.display=currentUser.perfil==='instituicao'?'':'none';
+        document.getElementById('navVol').style.display=currentUser.perfil==='voluntario'?'':'none';
+    }else{
+        document.getElementById('navAdmin').style.display='none';
+        document.getElementById('navInst').style.display='none';
+        document.getElementById('navVol').style.display='none';
+    }
+}
+
+function renderHome(){
+    const ops=getData('oportunidades').filter(o=>['publicado','inscricoes_abertas'].includes(o.estado));
+    const insts=getData('instituicoes');
+    const vols=getData('voluntarios');
+    document.getElementById('statOportunidades').textContent=ops.length;
+    document.getElementById('statInstituicoes').textContent=insts.length;
+    document.getElementById('statVoluntarios').textContent=vols.length;
+
+    const catMap=Object.fromEntries(CATEGORIAS.map(c=>[c.id,c.nome]));
+    const instMap=Object.fromEntries(insts.map(i=>[i.id,i.nome]));
+    let html='';
+    ops.slice(0,6).forEach(o=>{
+        html+='<div class="col-md-4 mb-4"><div class="card h-100">'+
+            '<div class="card-body">'+
+                '<span class="badge bg-primary mb-2">'+(catMap[o.categoriaId]||'Sem categoria')+'</span>'+
+                '<h5 class="card-title">'+o.titulo+'</h5>'+
+                '<p class="text-muted small"><i class="bi bi-building"></i> '+(instMap[o.instituicaoId]||'')+'<br>'+
+                '<i class="bi bi-geo-alt"></i> '+(o.local||o.freguesia||'Portugal')+'<br>'+
+                (o.dataInicio?'<i class="bi bi-calendar"></i> '+formatDate(o.dataInicio):'')+'</p>'+
+                '<p class="card-text">'+(o.descricao||'').substring(0,100)+'...</p>'+
+            '</div>'+
+            '<div class="card-footer bg-transparent">'+
+                '<a href="#" class="btn btn-outline-primary btn-sm" onclick="verDetalhe('+o.id+')">Ver Detalhes</a>'+
+                '<span class="badge bg-success float-end">'+o.vagas+' vaga(s)</span>'+
+            '</div>'+
+        '</div></div>';
+    });
+    if(!ops.length) html='<div class="col-12 text-center py-5"><p class="text-muted">Nenhuma oportunidade disponível.</p></div>';
+    document.getElementById('oportunidadesDestaque').innerHTML=html;
+}
+
+function renderOportunidades(){
+    const catSelect=document.getElementById('pesqCat');
+    if(catSelect.options.length<=1){
+        CATEGORIAS.forEach(c=>{catSelect.add(new Option(c.nome,c.id));});
+    }
+    filtrarOportunidades();
+}
+
+function filtrarOportunidades(){
+    const q=(document.getElementById('pesqQ').value||'').toLowerCase();
+    const cat=document.getElementById('pesqCat').value;
+    const loc=(document.getElementById('pesqLoc').value||'').toLowerCase();
+    let ops=getData('oportunidades').filter(o=>['publicado','inscricoes_abertas'].includes(o.estado));
+    if(q) ops=ops.filter(o=>o.titulo.toLowerCase().includes(q)||(o.descricao||'').toLowerCase().includes(q));
+    if(cat) ops=ops.filter(o=>o.categoriaId==cat);
+    if(loc) ops=ops.filter(o=>(o.local||'').toLowerCase().includes(loc)||(o.freguesia||'').toLowerCase().includes(loc));
+
+    const catMap=Object.fromEntries(CATEGORIAS.map(c=>[c.id,c.nome]));
+    const insts=getData('instituicoes');
+    const instMap=Object.fromEntries(insts.map(i=>[i.id,i.nome]));
+    let html='';
+    ops.forEach(o=>{
+        html+='<div class="col-md-6 mb-4"><div class="card h-100">'+
+            '<div class="card-body">'+
+                '<span class="badge bg-primary mb-2">'+(catMap[o.categoriaId]||'')+'</span>'+
+                '<h5 class="card-title">'+o.titulo+'</h5>'+
+                '<p class="text-muted small"><i class="bi bi-building"></i> '+(instMap[o.instituicaoId]||'')+
+                (o.local?'<br><i class="bi bi-geo-alt"></i> '+o.local:'')+
+                (o.dataInicio?'<br><i class="bi bi-calendar"></i> '+formatDate(o.dataInicio):'')+'</p>'+
+                '<p class="card-text">'+(o.descricao||'').substring(0,120)+'...</p>'+
+            '</div>'+
+            '<div class="card-footer bg-transparent d-flex justify-content-between">'+
+                '<a href="#" class="btn btn-outline-primary btn-sm" onclick="verDetalhe('+o.id+')">Ver Detalhes</a>'+
+                '<span class="badge bg-success">'+o.vagas+' vaga(s)</span>'+
+            '</div>'+
+        '</div></div>';
+    });
+    if(!ops.length) html='<div class="col-12 text-center py-5"><p class="text-muted">Nenhuma oportunidade encontrada.</p></div>';
+    document.getElementById('listaOportunidades').innerHTML=html;
+}
+
+function toggleRegForm(){
+    const tipo=document.querySelector('input[name="tipoReg"]:checked').value;
+    document.getElementById('regTipo').value=tipo;
+    document.getElementById('camposInstReg').style.display=tipo==='instituicao'?'':'none';
+    document.getElementById('camposVolReg').style.display=tipo==='voluntario'?'':'none';
+}
+
+function carregarInteressesRegisto(){
+    const cats=getData('categorias');
+    const el=document.getElementById('regInteresses');
+    if(!el)return;
+    el.innerHTML=cats.map(c=>`
+        <div class="col-md-4 col-6 mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="${c.id}" id="regInt_${c.id}">
+                <label class="form-check-label" for="regInt_${c.id}">${c.nome}</label>
+            </div>
+        </div>
+    `).join('');
+}
+
+function verDetalhe(id){
+    const o=getOportunidadeById(id);
+    if(!o)return;
+    const catMap=Object.fromEntries(CATEGORIAS.map(c=>[c.id,c.nome]));
+    const insts=getData('instituicoes');
+    const inst=insts.find(i=>i.id===o.instituicaoId);
+    const inscritos=getInscricoesByOp(id);
+    const vol=currentUser&&currentUser.perfil==='voluntario'?getVolByUserId(currentUser.id):null;
+    const jaInscrito=vol&&inscritos.some(i=>i.voluntarioId===vol.id);
+
+    let html='<div class="row"><div class="col-md-8"><div class="card mb-4"><div class="card-body">'+
+        '<span class="badge bg-primary mb-2">'+(catMap[o.categoriaId]||'')+'</span>'+
+        '<h2>'+o.titulo+'</h2>'+
+        '<div class="row my-3">'+
+            '<div class="col-sm-6"><p><i class="bi bi-building text-primary"></i> <strong>Instituição:</strong><br>'+(inst?inst.nome:'')+'</p></div>'+
+            '<div class="col-sm-6"><p><i class="bi bi-geo-alt text-primary"></i> <strong>Local:</strong><br>'+(o.local||'Não definido')+(o.freguesia?','+o.freguesia:'')+'</p></div>'+
+            '<div class="col-sm-6"><p><i class="bi bi-calendar text-primary"></i> <strong>Período:</strong><br>'+(o.dataInicio?formatDate(o.dataInicio):'A definir')+(o.dataFim?' - '+formatDate(o.dataFim):'')+'</p></div>'+
+            '<div class="col-sm-6"><p><i class="bi bi-clock text-primary"></i> <strong>Horário:</strong><br>'+(o.horário||o.horario||'A combinar')+'</p></div>'+
+        '</div>'+
+        '<h5>Descrição</h5><p>'+(o.descricao||'')+'</p>'+
+        (o.requisitos?'<h5>Requisitos</h5><p>'+o.requisitos+'</p>':'')+
+        (o.competências||o.competencias?'<h5>Competências</h5><p>'+(o.competências||o.competencias)+'</p>':'')+
+    '</div></div></div>';
+
+    html+='<div class="col-md-4">'+
+        '<div class="card mb-4"><div class="card-body text-center">'+
+            '<h3 class="text-success">'+o.vagas+'</h3><p class="text-muted">Vagas Disponíveis</p>'+
+            '<p class="small text-muted">'+inscritos.length+' inscrito(s)</p>'+
+        '</div></div>'+
+        '<div class="card mb-4"><div class="card-body">'+
+            '<h5>Contacto</h5>'+
+            '<p><i class="bi bi-envelope"></i> '+(inst?inst.email:'N/D')+'</p>'+
+            '<p><i class="bi bi-telephone"></i> '+(inst?inst.telefone:'N/D')+'</p>'+
+        '</div></div>';
+
+    if(currentUser&&currentUser.perfil==='voluntario'&&o.estado==='inscricoes_abertas'&&!jaInscrito){
+        html+='<div class="card"><div class="card-body">'+
+            '<h5>Inscrever-me</h5>'+
+            '<div class="mb-2"><label class="form-label">Telefone</label>'+
+            '<input type="tel" class="form-control" id="inscTel" value="'+(vol?vol.telefone:'')+'"></div>'+
+            '<div class="mb-3"><label class="form-label">Motivação (opcional)</label>'+
+            '<textarea class="form-control" id="inscMotiv" rows="2"></textarea></div>'+
+            '<button class="btn btn-success w-100" onclick="inscrever('+o.id+')">Confirmar Inscrição</button>'+
+        '</div></div>';
+    }else if(jaInscrito){
+        html+='<div class="card"><div class="card-body text-center">'+
+            '<i class="bi bi-check-circle text-success" style="font-size:2rem"></i>'+
+            '<h5 class="mt-2">Já está inscrito</h5>'+
+            '<p class="text-muted small">A sua inscrição está registada nesta oportunidade.</p>'+
+            '<button class="btn btn-outline-danger w-100" onclick="desinscrever('+o.id+')">'+
+            '<i class="bi bi-x-circle"></i> Cancelar Inscrição</button>'+
+        '</div></div>';
+    }
+
+    html+='</div></div>';
+    document.getElementById('detalheConteudo').innerHTML=html;
+    showPage('detalhe');
+}
+
+function inscrever(opId){
+    if(!currentUser||currentUser.perfil!=='voluntario')return;
+    const vol=getVolByUserId(currentUser.id);
+    if(!vol)return;
+    const tel=document.getElementById('inscTel').value.trim();
+    const motiv=document.getElementById('inscMotiv').value.trim();
+    if(!tel){alert('Preencha o telefone.');return;}
+    const inscricoes=getData('inscricoes');
+    inscricoes.push({
+        id:nextId('inscricoes'),
+        oportunidadeId:opId,
+        voluntarioId:vol.id,
+        telefone:tel,
+        motivação:motiv,
+        estado:'pendente',
+        dataInscricao:new Date().toISOString()
+    });
+    setData('inscricoes',inscricoes);
+    alert('Inscrição realizada com sucesso!');
+    verDetalhe(opId);
+}
+
+function desinscrever(opId){
+    if(!currentUser||currentUser.perfil!=='voluntario')return;
+    if(!confirm('Tem a certeza que pretende cancelar a inscrição?'))return;
+    const vol=getVolByUserId(currentUser.id);
+    if(!vol)return;
+    let inscricoes=getData('inscricoes');
+    const idx=inscricoes.findIndex(i=>i.oportunidadeId===opId&&i.voluntarioId===vol.id);
+    if(idx<0){alert('Inscrição não encontrada.');return;}
+    inscricoes.splice(idx,1);
+    setData('inscricoes',inscricoes);
+    alert('Inscrição cancelada com sucesso.');
+    verDetalhe(opId);
+}
+
+function fazerLogin(e){
+    e.preventDefault();
+    const email=document.getElementById('loginEmail').value.trim();
+    const pass=document.getElementById('loginPass').value;
+    const errEl=document.getElementById('loginErro');
+    errEl.style.display='none';
+    if(!email||!pass){errEl.textContent='Introduza o email e a password para entrar.';errEl.style.display='block';return;}
+    const user=getUserByEmail(email);
+    if(!user){errEl.textContent='Email nao encontrado. Verifique o email ou crie uma conta.';errEl.style.display='block';return;}
+    if(user.password!==pass){errEl.textContent='Password incorreta. Tente novamente.';errEl.style.display='block';return;}
+    currentUser=user;
+    localStorage.setItem('currentUser',JSON.stringify(currentUser));
+    document.getElementById('loginEmail').value='';
+    document.getElementById('loginPass').value='';
+    if(user.perfil==='administrador')showPage('admin');
+    else if(user.perfil==='instituicao')showPage('inst_dashboard');
+    else showPage('vol_dashboard');
+}
+
+function fazerRegisto(e){
+    e.preventDefault();
+    const perfil=document.getElementById('regTipo').value;
+    const errEl=document.getElementById('regErro');
+    errEl.style.display='none';
+
+    if(perfil==='instituicao'){
+        const nome=document.getElementById('regNomeInst').value.trim();
+        const nif=document.getElementById('regNif').value.trim();
+        const email=document.getElementById('regEmail').value.trim();
+        const pass=document.getElementById('regPass').value;
+        const pass2=document.getElementById('regPass2').value;
+        const tipo=document.getElementById('regTipoInst').value;
+        if(!nome||!email||!pass||!nif||!tipo){errEl.textContent='Preencha todos os campos marcados com * (nome, email, NIF, tipo e password).';errEl.style.display='block';return;}
+        if(nif.length!==9||!/^\d+$/.test(nif)){errEl.textContent='O NIF deve ter exatamente 9 digitos numericos.';errEl.style.display='block';return;}
+        if(pass!==pass2){errEl.textContent='As passwords nao coincidem. Confirme a password.';errEl.style.display='block';return;}
+        if(pass.length<6){errEl.textContent='A password deve ter pelo menos 6 caracteres.';errEl.style.display='block';return;}
+        if(getUserByEmail(email)){errEl.textContent='Este email ja esta registado. Faca login ou use outro email.';errEl.style.display='block';return;}
+        if(!document.getElementById('regTermos').checked){errEl.textContent='Deve aceitar os termos de utilizacao para continuar.';errEl.style.display='block';return;}
+
+        const users=getData('users');
+        const newId=nextId('users');
+        users.push({id:newId,nome:nome,email:email,password:pass,perfil:'instituicao',ativo:true});
+        setData('users',users);
+
+        const insts=getData('instituicoes');
+        insts.push({
+            id:nextId('instituicoes'),userId:newId,nome:nome,
+            nif:nif,tipo:tipo,email:email,
+            telefone:document.getElementById('regTelefoneInst').value.trim(),
+            pessoaContacto:document.getElementById('regContacto').value.trim(),
+            descricao:document.getElementById('regDescInst').value.trim(),
+            estadoValidacao:'pendente'
+        });
+        setData('instituicoes',insts);
+
+    }else{
+        const nome=document.getElementById('regNome').value.trim();
+        const email=document.getElementById('regEmail').value.trim();
+        const pass=document.getElementById('regPass').value;
+        const pass2=document.getElementById('regPass2').value;
+        const telefone=document.getElementById('regTelefone').value.trim();
+        const localidade=document.getElementById('regLocalidade').value.trim();
+        if(!nome||!email||!pass||!telefone||!localidade){errEl.textContent='Preencha todos os campos marcados com * (nome, email, telefone, localidade e password).';errEl.style.display='block';return;}
+        if(pass!==pass2){errEl.textContent='As passwords nao coincidem. Confirme a password.';errEl.style.display='block';return;}
+        if(pass.length<6){errEl.textContent='A password deve ter pelo menos 6 caracteres.';errEl.style.display='block';return;}
+        if(getUserByEmail(email)){errEl.textContent='Este email ja esta registado. Faca login ou use outro email.';errEl.style.display='block';return;}
+        if(!document.getElementById('regConsentDados').checked){errEl.textContent='Deve consentir o tratamento dos seus dados pessoais (RGPD).';errEl.style.display='block';return;}
+        if(!document.getElementById('regTermos').checked){errEl.textContent='Deve aceitar os termos de utilizacao para continuar.';errEl.style.display='block';return;}
+
+        const users=getData('users');
+        const newId=nextId('users');
+        users.push({id:newId,nome:nome,email:email,password:pass,perfil:'voluntario',ativo:true});
+        setData('users',users);
+
+        const interessesIds=[];
+        document.querySelectorAll('#regInteresses input[type=checkbox]:checked').forEach(cb=>{
+            interessesIds.push(Number(cb.value));
+        });
+
+        const vols=getData('voluntarios');
+        vols.push({
+            id:nextId('voluntarios'),userId:newId,
+            telefone:telefone,localidade:localidade,
+            dataNascimento:document.getElementById('regDataNasc').value||null,
+            disponibilidade:document.getElementById('regDisponibilidade').value,
+            competencias:document.getElementById('regCompetencias').value.trim(),
+            consentimentoDados:true,
+            interesses:interessesIds
+        });
+        setData('voluntarios',vols);
+    }
+    alert('Registo realizado! Pode fazer login.');
+    showPage('login');
+}
+
+function fazerLogout(){
+    currentUser=null;
+    localStorage.removeItem('currentUser');
+    showPage('home');
+}
+
+function renderAdmin(){
+    if(!currentUser||currentUser.perfil!=='administrador')return;
+    const insts=getData('instituicoes');
+    const pendentes=insts.filter(i=>i.estadoValidacao==='pendente');
+    const aprovadas=insts.filter(i=>i.estadoValidacao==='aprovada');
+    const ops=getData('oportunidades');
+    const inscricoes=getData('inscricoes');
+    const users=getData('users');
+    const vols=getData('voluntarios');
+
+    let statsHtml='<div class="col-md-3 mb-3"><div class="card stat-card"><i class="bi bi-people text-primary" style="font-size:2rem"></i><h3>'+users.length+'</h3><p class="text-muted">Utilizadores</p></div></div>'+
+        '<div class="col-md-3 mb-3"><div class="card stat-card"><i class="bi bi-hourglass-split text-warning" style="font-size:2rem"></i><h3>'+pendentes.length+'</h3><p class="text-muted">Pendentes</p></div></div>'+
+        '<div class="col-md-3 mb-3"><div class="card stat-card"><i class="bi bi-check-circle text-success" style="font-size:2rem"></i><h3>'+aprovadas.length+'</h3><p class="text-muted">Aprovadas</p></div></div>'+
+        '<div class="col-md-3 mb-3"><div class="card stat-card"><i class="bi bi-journal-check text-info" style="font-size:2rem"></i><h3>'+inscricoes.length+'</h3><p class="text-muted">Inscrições</p></div></div>';
+    document.getElementById('adminStats').innerHTML=statsHtml;
+
+    let pendHtml='<div class="card mb-4"><div class="card-header"><h5 class="mb-0"><i class="bi bi-hourglass-split"></i> Instituições Pendentes</h5></div><div class="card-body">';
+    if(!pendentes.length) pendHtml+='<p class="text-muted mb-0">Nenhuma instituição pendente.</p>';
+    pendentes.forEach(i=>{
+        pendHtml+='<div class="d-flex justify-content-between align-items-center border-bottom py-2">'+
+            '<div><strong>'+i.nome+'</strong> — NIF: '+i.nif+' | Tipo: '+i.tipo+'</div>'+
+            '<div><button class="btn btn-success btn-sm me-1" onclick="aprovarInst('+i.id+')">Aprovar</button>'+
+            '<button class="btn btn-danger btn-sm" onclick="rejeitarInst('+i.id+')">Rejeitar</button></div>'+
+        '</div>';
+    });
+    pendHtml+='</div></div>';
+    document.getElementById('adminPendentes').innerHTML=pendHtml;
+
+    const opsPendentes=ops.filter(o=>o.estado==='rascunho');
+    const instMap=Object.fromEntries(insts.map(i=>[i.id,i.nome]));
+    let opsHtml='<div class="card mb-4"><div class="card-header"><h5 class="mb-0"><i class="bi bi-shield-check"></i> Oportunidades Pendentes de Aprovação'+(opsPendentes.length?' <span class="badge bg-warning">'+opsPendentes.length+'</span>':'')+'</h5></div><div class="card-body">';
+    if(!opsPendentes.length) opsHtml+='<p class="text-muted mb-0">Nenhuma oportunidade pendente.</p>';
+    opsPendentes.forEach(o=>{
+        opsHtml+='<div class="d-flex justify-content-between align-items-center border-bottom py-2">'+
+            '<div><strong>'+o.titulo+'</strong> — '+(instMap[o.instituicaoId]||'')+'<br><small class="text-muted">'+(o.local||'')+'</small></div>'+
+            '<div><button class="btn btn-success btn-sm me-1" onclick="aprovarOp('+o.id+')">Aprovar</button>'+
+            '<button class="btn btn-danger btn-sm" onclick="rejeitarOp('+o.id+')">Rejeitar</button></div>'+
+        '</div>';
+    });
+    opsHtml+='</div></div>';
+    document.getElementById('adminOpsPendentes').innerHTML=opsHtml;
+
+    let tableHtml='<table class="table table-striped table-hover"><thead><tr>'+
+        '<th>Voluntário</th><th>Oportunidade</th><th>Data</th><th>Estado</th><th>Ações</th>'+
+        '</tr></thead><tbody>';
+    const sorted=[...inscricoes].sort((a,b)=>new Date(b.dataInscricao)-new Date(a.dataInscricao));
+    sorted.forEach(insc=>{
+        const op=getOportunidadeById(insc.oportunidadeId);
+        const vol=vols.find(v=>v.id===insc.voluntarioId);
+        const volUser=vol?users.find(u=>u.id===vol.userId):null;
+        const ec=insc.estado==='aprovada'?'success':insc.estado==='rejeitada'?'danger':'warning';
+        tableHtml+='<tr><td>'+(volUser?volUser.nome:'Vol. #'+insc.voluntarioId)+'</td>'+
+            '<td>'+(op?op.titulo:'Op. #'+insc.oportunidadeId)+'</td>'+
+            '<td>'+formatDate(insc.dataInscricao.substring(0,10))+'</td>'+
+            '<td><span class="badge bg-'+ec+'">'+insc.estado+'</span></td>'+
+            '<td>'+
+                (insc.estado==='pendente'?'<button class="btn btn-success btn-sm me-1" onclick="aprovarInsc('+insc.id+')">✓</button><button class="btn btn-danger btn-sm" onclick="rejeitarInsc('+insc.id+')">✕</button>':'—')+
+            '</td></tr>';
+    });
+    if(!sorted.length) tableHtml+='<tr><td colspan="5" class="text-center text-muted">Nenhuma inscrição.</td></tr>';
+    tableHtml+='</tbody></table>';
+    document.getElementById('adminInscricoes').innerHTML=tableHtml;
+}
+
+function aprovarInst(id){
+    const insts=getData('instituicoes');
+    const inst=insts.find(i=>i.id===id);
+    if(inst){inst.estadoValidacao='aprovada';setData('instituicoes',insts);renderAdmin();}
+}
+function rejeitarInst(id){
+    if(!confirm('Rejeitar esta instituição?'))return;
+    const insts=getData('instituicoes');
+    const idx=insts.findIndex(i=>i.id===id);
+    if(idx>=0){insts.splice(idx,1);setData('instituicoes',insts);renderAdmin();}
+}
+function suspenderInst(id){
+    if(!confirm('Suspender esta instituição?'))return;
+    const insts=getData('instituicoes');
+    const inst=insts.find(i=>i.id===id);
+    if(inst){inst.estadoValidacao='suspensa';setData('instituicoes',insts);renderAdmin();}
+}
+function aprovarInsc(id){
+    const inscricoes=getData('inscricoes');
+    const insc=inscricoes.find(i=>i.id===id);
+    if(insc){insc.estado='aprovada';setData('inscricoes',inscricoes);renderAdmin();}
+}
+function rejeitarInsc(id){
+    const inscricoes=getData('inscricoes');
+    const insc=inscricoes.find(i=>i.id===id);
+    if(insc){insc.estado='rejeitada';setData('inscricoes',inscricoes);renderAdmin();}
+}
+function aprovarOp(id){
+    const ops=getData('oportunidades');
+    const o=ops.find(x=>x.id===id);
+    if(o){o.estado='publicado';setData('oportunidades',ops);renderAdmin();alert('Oportunidade aprovada e publicada!');}
+}
+function rejeitarOp(id){
+    if(!confirm('Rejeitar esta oportunidade? (ficará como rascunho)'))return;
+    const ops=getData('oportunidades');
+    const o=ops.find(x=>x.id===id);
+    if(o){o.estado='cancelada';setData('oportunidades',ops);renderAdmin();}
+}
+
+function renderInstDashboard(){
+    if(!currentUser||currentUser.perfil!=='instituicao')return;
+    const inst=getInstByUserId(currentUser.id);
+    if(!inst)return;
+    const ops=getData('oportunidades').filter(o=>o.instituicaoId===inst.id);
+    const inscricoes=getData('inscricoes');
+    const catMap=Object.fromEntries(CATEGORIAS.map(c=>[c.id,c.nome]));
+
+    let html='<div class="d-flex justify-content-between align-items-center mb-4">'+
+        '<h4>Minhas Oportunidades</h4>'+
+        '<div><button class="btn btn-outline-secondary me-2" onclick="editarPerfilInst()"><i class="bi bi-person-gear"></i> Perfil</button>'+
+        '<button class="btn btn-primary" onclick="showCriarOportunidade()">+ Criar Oportunidade</button></div>'+
+    '</div>';
+
+    html+='<div class="table-responsive"><table class="table table-hover"><thead><tr>'+
+        '<th>Título</th><th>Categoria</th><th>Local</th><th>Inscritos</th><th>Estado</th><th>Ações</th>'+
+        '</tr></thead><tbody>';
+    ops.forEach(o=>{
+        const opInsc=inscricoes.filter(i=>i.oportunidadeId===o.id);
+        const ec=o.estado==='inscricoes_abertas'?'success':o.estado==='publicado'?'primary':o.estado==='concluida'?'dark':o.estado==='cancelada'?'danger':o.estado==='encerradas'?'warning':'secondary';
+        html+='<tr><td>'+o.titulo+'</td>'+
+            '<td><span class="badge bg-primary">'+(catMap[o.categoriaId]||'')+'</span></td>'+
+            '<td>'+(o.local||o.freguesia||'')+'</td>'+
+            '<td><span class="badge bg-info">'+opInsc.length+'</span></td>'+
+            '<td><span class="badge bg-'+ec+'">'+o.estado.replace(/_/g,' ')+'</span></td>'+
+            '<td>'+
+                '<button class="btn btn-outline-primary btn-sm me-1" onclick="editarOportunidade('+o.id+')" title="Editar"><i class="bi bi-pencil"></i></button>'+
+                '<button class="btn btn-outline-secondary btn-sm me-1" onclick="verInscritos('+o.id+')" title="Inscritos"><i class="bi bi-people"></i></button>'+
+                (o.estado!=='concluida'?'<button class="btn btn-success btn-sm me-1" onclick="concluirOportunidade('+o.id+')" title="Concluir">✓</button>':'')+
+                '<button class="btn btn-outline-danger btn-sm" onclick="eliminarOportunidade('+o.id+')" title="Eliminar"><i class="bi bi-trash"></i></button>'+
+            '</td></tr>';
+    });
+    if(!ops.length) html+='<tr><td colspan="6" class="text-center text-muted">Nenhuma oportunidade criada.</td></tr>';
+    html+='</tbody></table></div>';
+    document.getElementById('instOportunidades').innerHTML=html;
+}
+
+function showCriarOportunidade(){
+    const inst=getInstByUserId(currentUser.id);
+    if(!inst)return;
+    let catOpts='<option value="">Selecionar...</option>';
+    CATEGORIAS.forEach(c=>{catOpts+='<option value="'+c.id+'">'+c.nome+'</option>';});
+
+    let html='<div class="card"><div class="card-body"><h4><i class="bi bi-plus-circle"></i> Criar Oportunidade</h4>'+
+        '<div class="row g-3 mt-2">'+
+            '<div class="col-md-8"><label class="form-label">Título *</label>'+
+            '<input type="text" class="form-control" id="newTitulo" required></div>'+
+            '<div class="col-md-4"><label class="form-label">Categoria</label>'+
+            '<select class="form-select" id="newCat">'+catOpts+'</select></div>'+
+            '<div class="col-12"><label class="form-label">Descrição</label>'+
+            '<textarea class="form-control" id="newDesc" rows="3"></textarea></div>'+
+            '<div class="col-md-4"><label class="form-label">Local</label>'+
+            '<input type="text" class="form-control" id="newLocal"></div>'+
+            '<div class="col-md-4"><label class="form-label">Freguesia</label>'+
+            '<input type="text" class="form-control" id="newFreg"></div>'+
+            '<div class="col-md-4"><label class="form-label">Horário</label>'+
+            '<input type="text" class="form-control" id="newHorario"></div>'+
+            '<div class="col-md-3"><label class="form-label">Data Início</label>'+
+            '<input type="date" class="form-control" id="newDataInicio"></div>'+
+            '<div class="col-md-3"><label class="form-label">Data Fim</label>'+
+            '<input type="date" class="form-control" id="newDataFim"></div>'+
+            '<div class="col-md-3"><label class="form-label">Vagas</label>'+
+            '<input type="number" class="form-control" id="newVagas" value="1" min="1"></div>'+
+            '<div class="col-md-3"><label class="form-label">Estado</label>'+
+            '<select class="form-select" id="newEstado" disabled>'+
+                '<option value="rascunho" selected>Rascunho (Pendente de Aprovação)</option>'+
+            '</select></div>'+
+            '<div class="col-12"><div class="alert alert-info mb-0"><i class="bi bi-info-circle"></i> A oportunidade será submetida para aprovação do administrador. Só após aprovação ficará visível aos voluntários.</div></div>'+
+            '<div class="col-md-6"><label class="form-label">Requisitos</label>'+
+            '<textarea class="form-control" id="newRequisitos" rows="2"></textarea></div>'+
+            '<div class="col-md-6"><label class="form-label">Competências</label>'+
+            '<textarea class="form-control" id="newComp" rows="2"></textarea></div>'+
+            '<div class="col-12 mt-3">'+
+            '<button class="btn btn-primary me-2" onclick="guardarNovaOportunidade()">Criar</button>'+
+            '<button class="btn btn-secondary" onclick="renderInstDashboard()">Cancelar</button></div>'+
+        '</div></div></div>';
+    document.getElementById('instOportunidades').innerHTML=html;
+}
+
+function guardarNovaOportunidade(){
+    const titulo=document.getElementById('newTitulo').value.trim();
+    if(!titulo){alert('O título é obrigatório.');return;}
+    const inst=getInstByUserId(currentUser.id);
+    if(!inst)return;
+
+    const ops=getData('oportunidades');
+    const newOp={
+        id:nextId('oportunidades'),
+        instituicaoId:inst.id,
+        categoriaId:parseInt(document.getElementById('newCat').value)||1,
+        titulo:titulo,
+        descricao:document.getElementById('newDesc').value.trim(),
+        local:document.getElementById('newLocal').value.trim(),
+        freguesia:document.getElementById('newFreg').value.trim(),
+        horário:document.getElementById('newHorario').value.trim(),
+        dataInicio:document.getElementById('newDataInicio').value||null,
+        dataFim:document.getElementById('newDataFim').value||null,
+        vagas:parseInt(document.getElementById('newVagas').value)||1,
+        requisitos:document.getElementById('newRequisitos').value.trim(),
+        competências:document.getElementById('newComp').value.trim(),
+        estado:document.getElementById('newEstado').value,
+        criadaEm:new Date().toISOString()
+    };
+    ops.push(newOp);
+    setData('oportunidades',ops);
+    alert('Oportunidade criada!');
+    renderInstDashboard();
+}
+
+function editarOportunidade(id){
+    const o=getOportunidadeById(id);
+    if(!o)return;
+    let catOpts='';
+    CATEGORIAS.forEach(c=>{catOpts+='<option value="'+c.id+'"'+(o.categoriaId==c.id?' selected':'')+'>'+c.nome+'</option>';});
+
+    let html='<div class="card"><div class="card-body"><h4><i class="bi bi-pencil"></i> Editar Oportunidade</h4>'+
+        '<div class="row g-3 mt-2">'+
+            '<div class="col-md-8"><label class="form-label">Título *</label>'+
+            '<input type="text" class="form-control" id="editTitulo" value="'+o.titulo+'"></div>'+
+            '<div class="col-md-4"><label class="form-label">Categoria</label>'+
+            '<select class="form-select" id="editCat">'+catOpts+'</select></div>'+
+            '<div class="col-12"><label class="form-label">Descrição</label>'+
+            '<textarea class="form-control" id="editDesc" rows="3">'+(o.descricao||'')+'</textarea></div>'+
+            '<div class="col-md-4"><label class="form-label">Local</label>'+
+            '<input type="text" class="form-control" id="editLocal" value="'+(o.local||'')+'"></div>'+
+            '<div class="col-md-4"><label class="form-label">Freguesia</label>'+
+            '<input type="text" class="form-control" id="editFreg" value="'+(o.freguesia||'')+'"></div>'+
+            '<div class="col-md-4"><label class="form-label">Horário</label>'+
+            '<input type="text" class="form-control" id="editHorario" value="'+(o.horário||o.horario||'')+'"></div>'+
+            '<div class="col-md-3"><label class="form-label">Data Início</label>'+
+            '<input type="date" class="form-control" id="editDataInicio" value="'+(o.dataInicio||'')+'"></div>'+
+            '<div class="col-md-3"><label class="form-label">Data Fim</label>'+
+            '<input type="date" class="form-control" id="editDataFim" value="'+(o.dataFim||'')+'"></div>'+
+            '<div class="col-md-3"><label class="form-label">Vagas</label>'+
+            '<input type="number" class="form-control" id="editVagas" value="'+o.vagas+'" min="1"></div>'+
+            '<div class="col-md-3"><label class="form-label">Estado</label>'+
+            '<select class="form-select" id="editEstado">'+
+                '<option value="rascunho"'+(o.estado==='rascunho'?' selected':'')+'>Rascunho</option>'+
+                '<option value="publicado"'+(o.estado==='publicado'?' selected':'')+'>Publicado</option>'+
+                '<option value="inscricoes_abertas"'+(o.estado==='inscricoes_abertas'?' selected':'')+'>Inscrições Abertas</option>'+
+                '<option value="encerradas"'+(o.estado==='encerradas'?' selected':'')+'>Inscrições Encerradas</option>'+
+                '<option value="concluida"'+(o.estado==='concluida'?' selected':'')+'>Concluída</option>'+
+                '<option value="cancelada"'+(o.estado==='cancelada'?' selected':'')+'>Cancelada</option>'+
+            '</select></div>'+
+            '<div class="col-md-6"><label class="form-label">Requisitos</label>'+
+            '<textarea class="form-control" id="editRequisitos" rows="2">'+(o.requisitos||'')+'</textarea></div>'+
+            '<div class="col-md-6"><label class="form-label">Competências</label>'+
+            '<textarea class="form-control" id="editComp" rows="2">'+(o.competencias||o.competências||'')+'</textarea></div>'+
+            '<div class="col-12 mt-3">'+
+            '<button class="btn btn-primary me-2" onclick="guardarEdicaoOportunidade('+o.id+')">Guardar</button>'+
+            '<button class="btn btn-secondary" onclick="renderInstDashboard()">Cancelar</button></div>'+
+        '</div></div></div>';
+    document.getElementById('instOportunidades').innerHTML=html;
+}
+
+function guardarEdicaoOportunidade(id){
+    const ops=getData('oportunidades');
+    const idx=ops.findIndex(o=>o.id===id);
+    if(idx<0)return;
+    ops[idx].titulo=document.getElementById('editTitulo').value.trim();
+    ops[idx].categoriaId=parseInt(document.getElementById('editCat').value);
+    ops[idx].descricao=document.getElementById('editDesc').value.trim();
+    ops[idx].local=document.getElementById('editLocal').value.trim();
+    ops[idx].freguesia=document.getElementById('editFreg').value.trim();
+    ops[idx].horário=document.getElementById('editHorario').value.trim();
+    ops[idx].dataInicio=document.getElementById('editDataInicio').value||null;
+    ops[idx].dataFim=document.getElementById('editDataFim').value||null;
+    ops[idx].vagas=parseInt(document.getElementById('editVagas').value)||1;
+    ops[idx].estado=document.getElementById('editEstado').value;
+    ops[idx].requisitos=document.getElementById('editRequisitos').value.trim();
+    ops[idx].competências=document.getElementById('editComp').value.trim();
+    setData('oportunidades',ops);
+    alert('Oportunidade atualizada!');
+    renderInstDashboard();
+}
+
+function concluirOportunidade(id){
+    if(!confirm('Marcar esta oportunidade como concluída?'))return;
+    const ops=getData('oportunidades');
+    const idx=ops.findIndex(o=>o.id===id);
+    if(idx<0)return;
+    ops[idx].estado='concluida';
+    setData('oportunidades',ops);
+    alert('Oportunidade concluída!');
+    renderInstDashboard();
+}
+
+function eliminarOportunidade(id){
+    if(!confirm('Eliminar esta oportunidade?'))return;
+    let ops=getData('oportunidades');
+    ops=ops.filter(o=>o.id!==id);
+    setData('oportunidades',ops);
+    renderInstDashboard();
+}
+
+function verInscritos(opId){
+    const op=getOportunidadeById(opId);
+    if(!op)return;
+    const inscricoes=getInscricoesByOp(opId);
+    const vols=getData('voluntarios');
+    const users=getData('users');
+
+    let html='<div class="d-flex justify-content-between align-items-center mb-3">'+
+        '<h4><i class="bi bi-people"></i> Inscritos: '+op.titulo+'</h4>'+
+        '<div>'+
+            '<button class="btn btn-success btn-sm me-2" onclick="exportarInscritos('+opId+')"><i class="bi bi-download"></i> Exportar CSV</button>'+
+            '<button class="btn btn-secondary btn-sm" onclick="renderInstDashboard()"><i class="bi bi-arrow-left"></i> Voltar</button>'+
+        '</div></div>';
+
+    html+='<div class="table-responsive"><table class="table table-striped"><thead><tr>'+
+        '<th>Nome</th><th>Email</th><th>Telefone</th><th>Localidade</th><th>Motivação</th><th>Estado</th><th>Ações</th>'+
+    '</tr></thead><tbody>';
+    inscricoes.forEach(insc=>{
+        const vol=vols.find(v=>v.id===insc.voluntarioId);
+        const volUser=vol?users.find(u=>u.id===vol.userId):null;
+        const ec=insc.estado==='aprovada'?'success':insc.estado==='rejeitada'?'danger':'warning';
+        html+='<tr><td>'+(volUser?volUser.nome:'N/D')+'</td>'+
+            '<td>'+(volUser?volUser.email:'N/D')+'</td>'+
+            '<td>'+insc.telefone+'</td>'+
+            '<td>'+(vol?vol.localidade:'')+'</td>'+
+            '<td>'+(insc.motivação||insc.motivacao||'-')+'</td>'+
+            '<td><span class="badge bg-'+ec+'">'+insc.estado+'</span></td>'+
+            '<td>'+
+                (insc.estado==='pendente'?'<button class="btn btn-success btn-sm me-1" onclick="aprovarInsc('+insc.id+');verInscritos('+opId+')">Aprovar</button><button class="btn btn-danger btn-sm" onclick="rejeitarInsc('+insc.id+');verInscritos('+opId+')">Rejeitar</button>':'—')+
+            '</td></tr>';
+    });
+    if(!inscricoes.length) html+='<tr><td colspan="7" class="text-center text-muted">Nenhum inscrito.</td></tr>';
+    html+='</tbody></table></div>';
+    document.getElementById('instOportunidades').innerHTML=html;
+}
+
+function exportarInscritos(opId){
+    const op=getOportunidadeById(opId);
+    if(!op)return;
+    const inscricoes=getInscricoesByOp(opId);
+    const vols=getData('voluntarios');
+    const users=getData('users');
+
+    let csv='ID,Nome,Email,Telefone,Localidade,Motivação,Estado,Data\n';
+    inscricoes.forEach(insc=>{
+        const vol=vols.find(v=>v.id===insc.voluntarioId);
+        const volUser=vol?users.find(u=>u.id===vol.userId):null;
+        csv+=insc.id+',"'+(volUser?volUser.nome:'N/D')+'","'+(volUser?volUser.email:'N/D')+'","'+insc.telefone+'","'+(vol?vol.localidade:'')+'","'+(insc.motivação||insc.motivacao||'')+'",'+insc.estado+','+(insc.dataInscricao?insc.dataInscricao.substring(0,10):'')+'\n';
+    });
+
+    const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+    const link=document.createElement('a');
+    link.href=URL.createObjectURL(blob);
+    link.download='inscritos-'+op.titulo.replace(/[^a-zA-Z0-9]/g,'_')+'.csv';
+    link.click();
+}
+
+function renderVolDashboard(){
+    if(!currentUser||currentUser.perfil!=='voluntario')return;
+    const vol=getVolByUserId(currentUser.id);
+    if(!vol)return;
+    const inscricoes=getData('inscricoes').filter(i=>i.voluntarioId===vol.id);
+    const catMap=Object.fromEntries(CATEGORIAS.map(c=>[c.id,c.nome]));
+    const insts=getData('instituicoes');
+    const instMap=Object.fromEntries(insts.map(i=>[i.id,i.nome]));
+
+    let html='<div class="d-flex justify-content-between align-items-center mb-4">'+
+        '<h4>Painel do Voluntário</h4>'+
+        '<div><button class="btn btn-outline-secondary me-2" onclick="editarPerfilVol()"><i class="bi bi-person-gear"></i> Perfil</button>'+
+        '<a href="#" class="btn btn-primary" onclick="showPage(\'oportunidades\')"><i class="bi bi-search"></i> Explorar</a></div>'+
+    '</div>';
+
+    html+='<ul class="nav nav-tabs mb-4">'+
+        '<li class="nav-item"><a class="nav-link active" href="#" onclick="renderVolDashboard()">Inscrições</a></li>'+
+        '<li class="nav-item"><a class="nav-link" href="#" onclick="verHistoricoVol()">Histórico</a></li>'+
+    '</ul>';
+
+    if(inscricoes.length){
+        inscricoes.forEach(insc=>{
+            const op=getOportunidadeById(insc.oportunidadeId);
+            if(!op)return;
+            const ec=insc.estado==='aprovada'?'success':insc.estado==='rejeitada'?'danger':'warning';
+            html+='<div class="card mb-3"><div class="card-body">'+
+                '<div class="d-flex justify-content-between align-items-start">'+
+                    '<div><span class="badge bg-primary me-2">'+(catMap[op.categoriaId]||'')+'</span>'+
+                    '<span class="badge bg-'+ec+'">'+insc.estado+'</span></div>'+
+                    (insc.estado==='pendente'||insc.estado==='aprovada'?
+                        '<button class="btn btn-outline-danger btn-sm" onclick="cancelarInscricaoVol('+insc.id+','+op.id+')"><i class="bi bi-x-circle"></i> Cancelar</button>':'')+
+                '</div>'+
+                '<h5 class="mt-2 mb-1">'+op.titulo+'</h5>'+
+                '<p class="text-muted small mb-2"><i class="bi bi-building"></i> '+(instMap[op.instituicaoId]||'')+
+                ' · <i class="bi bi-geo-alt"></i> '+(op.local||'')+
+                ' · <i class="bi bi-calendar"></i> '+(op.dataInicio?formatDate(op.dataInicio):'')+'</p>'+
+                '<a href="#" class="btn btn-outline-primary btn-sm" onclick="verDetalhe('+op.id+')">Ver Oportunidade</a>'+
+            '</div></div>';
+        });
+    }else{
+        html+='<div class="text-center py-5"><i class="bi bi-inbox text-muted" style="font-size:3rem"></i>'+
+            '<p class="text-muted mt-3">Ainda não tem inscrições.</p>'+
+            '<a href="#" class="btn btn-primary" onclick="showPage(\'oportunidades\')">Explorar Oportunidades</a></div>';
+    }
+    document.getElementById('volInscricoes').innerHTML=html;
+}
+
+function cancelarInscricaoVol(inscId,opId){
+    if(!confirm('Tem a certeza que pretende cancelar esta inscrição?'))return;
+    let inscricoes=getData('inscricoes');
+    inscricoes=inscricoes.filter(i=>i.id!==inscId);
+    setData('inscricoes',inscricoes);
+    alert('Inscrição cancelada.');
+    renderVolDashboard();
+}
+
+function verHistoricoVol(){
+    const vol=getVolByUserId(currentUser.id);
+    if(!vol)return;
+    const inscricoes=getData('inscricoes').filter(i=>i.voluntarioId===vol.id);
+    const catMap=Object.fromEntries(CATEGORIAS.map(c=>[c.id,c.nome]));
+    const insts=getData('instituicoes');
+    const instMap=Object.fromEntries(insts.map(i=>[i.id,i.nome]));
+
+    let html='<div class="d-flex justify-content-between align-items-center mb-4">'+
+        '<h4>Histórico de Participações</h4>'+
+        '<div><button class="btn btn-outline-secondary me-2" onclick="editarPerfilVol()"><i class="bi bi-person-gear"></i> Perfil</button>'+
+        '<a href="#" class="btn btn-primary" onclick="showPage(\'oportunidades\')"><i class="bi bi-search"></i> Explorar</a></div>'+
+    '</div>';
+
+    html+='<ul class="nav nav-tabs mb-4">'+
+        '<li class="nav-item"><a class="nav-link" href="#" onclick="renderVolDashboard()">Inscrições</a></li>'+
+        '<li class="nav-item"><a class="nav-link active" href="#">Histórico</a></li>'+
+    '</ul>';
+
+    if(inscricoes.length){
+        html+='<div class="table-responsive"><table class="table table-hover"><thead><tr>'+
+            '<th>Oportunidade</th><th>Categoria</th><th>Instituição</th><th>Local</th><th>Data</th><th>Estado</th>'+
+            '</tr></thead><tbody>';
+        inscricoes.forEach(insc=>{
+            const op=getOportunidadeById(insc.oportunidadeId);
+            if(!op)return;
+            const ec=insc.estado==='aprovada'?'success':insc.estado==='rejeitada'?'danger':insc.estado==='concluida'?'dark':'warning';
+            html+='<tr><td>'+op.titulo+'</td>'+
+                '<td><span class="badge bg-primary">'+(catMap[op.categoriaId]||'')+'</span></td>'+
+                '<td>'+(instMap[op.instituicaoId]||'')+'</td>'+
+                '<td>'+(op.local||'')+'</td>'+
+                '<td>'+(op.dataInicio?formatDate(op.dataInicio):'')+'</td>'+
+                '<td><span class="badge bg-'+ec+'">'+insc.estado+'</span></td></tr>';
+        });
+        html+='</tbody></table></div>';
+
+        const total=inscricoes.length;
+        const aprovadas=inscricoes.filter(i=>i.estado==='aprovada').length;
+        const pendentes=inscricoes.filter(i=>i.estado==='pendente').length;
+        html+='<div class="row mt-4">'+
+            '<div class="col-md-4"><div class="card stat-card"><h3 class="text-success">'+aprovadas+'</h3><p class="text-muted">Participações</p></div></div>'+
+            '<div class="col-md-4"><div class="card stat-card"><h3 class="text-warning">'+pendentes+'</h3><p class="text-muted">Pendentes</p></div></div>'+
+            '<div class="col-md-4"><div class="card stat-card"><h3 class="text-primary">'+total+'</h3><p class="text-muted">Total Inscrições</p></div></div>'+
+        '</div>';
+    }else{
+        html+='<div class="text-center py-5"><i class="bi bi-clock-history text-muted" style="font-size:3rem"></i>'+
+            '<p class="text-muted mt-3">Nenhuma participação registada.</p></div>';
+    }
+    document.getElementById('volInscricoes').innerHTML=html;
+}
+
+function editarPerfilVol(){
+    const vol=getVolByUserId(currentUser.id);
+    if(!vol)return;
+    const interesses=getData('voluntario_interesses_'+currentUser.id)||[];
+
+    let catChecks='';
+    CATEGORIAS.forEach(c=>{
+        catChecks+='<div class="col-md-4 col-6 mb-2"><div class="form-check">'+
+            '<input class="form-check-input" type="checkbox" value="'+c.id+'" id="intCat-'+c.id+'"'+
+            (interesses.includes(c.id)?' checked':'')+'>'+
+            '<label class="form-check-label" for="intCat-'+c.id+'">'+c.nome+'</label>'+
+        '</div></div>';
+    });
+
+    let html='<div class="card mb-4"><div class="card-body"><h4><i class="bi bi-person-gear"></i> Editar Perfil</h4>'+
+        '<div class="row g-3 mt-2">'+
+            '<div class="col-md-8"><label class="form-label">Nome *</label>'+
+            '<input type="text" class="form-control" id="volNome" value="'+currentUser.nome+'"></div>'+
+            '<div class="col-md-4"><label class="form-label">Email</label>'+
+            '<input type="email" class="form-control" value="'+currentUser.email+'" disabled>'+
+            '<small class="text-muted">Contacte o admin.</small></div>'+
+            '<div class="col-md-6"><label class="form-label">Telefone</label>'+
+            '<input type="text" class="form-control" id="volTelefone" value="'+(vol.telefone||'')+'"></div>'+
+            '<div class="col-md-6"><label class="form-label">Localidade</label>'+
+            '<input type="text" class="form-control" id="volLocalidade" value="'+(vol.localidade||'')+'"></div>'+
+            '<div class="col-12 mt-3">'+
+            '<button class="btn btn-primary me-2" onclick="guardarPerfilVol()">Guardar</button>'+
+            '<button class="btn btn-secondary" onclick="renderVolDashboard()">Cancelar</button></div>'+
+        '</div></div></div>';
+
+    html+='<div class="card mb-4"><div class="card-body"><h5><i class="bi bi-heart"></i> Áreas de Interesse</h5>'+
+        '<p class="text-muted">Selecione as categorias que mais lhe interessam:</p>'+
+        '<div class="row">'+catChecks+'</div>'+
+        '<button class="btn btn-outline-primary mt-3" onclick="guardarInteressesVol()">Guardar Áreas de Interesse</button>'+
+    '</div></div>';
+
+    html+='<div class="card mb-4"><div class="card-body"><h5>Alterar Password</h5>'+
+        '<div class="row g-3 mt-2">'+
+            '<div class="col-md-6"><label class="form-label">Nova Password</label>'+
+            '<input type="password" class="form-control" id="volPass" minlength="6"></div>'+
+            '<div class="col-md-6"><label class="form-label">Confirmar</label>'+
+            '<input type="password" class="form-control" id="volPass2"></div>'+
+            '<div class="col-12"><button class="btn btn-warning" onclick="alterarPassVol()">Alterar Password</button></div>'+
+        '</div></div></div>';
+
+    html+='<div class="card border-danger mb-4"><div class="card-body">'+
+        '<h5 style="color:var(--err);font-weight:600"><i class="bi bi-exclamation-triangle"></i> Zona de Perigo</h5>'+
+        '<p style="font-size:.85rem;color:var(--txt2)">Eliminar a sua conta ira remover todos os seus dados pessoais e inscricoes. Esta acao e irreversivel.</p>'+
+        '<button class="btn btn-err btn-sm" onclick="eliminarContaVol()">Eliminar a Minha Conta</button>'+
+    '</div></div>';
+
+    document.getElementById('volInscricoes').innerHTML=html;
+}
+
+function eliminarContaVol(){
+    if(!confirm('Tem a certeza que pretende eliminar a sua conta? Esta acao e irreversivel.'))return;
+    const vol=getVolByUserId(currentUser.id);
+    if(vol){
+        const vols=getData('voluntarios').filter(v=>v.userId!==currentUser.id);
+        setData('voluntarios',vols);
+    }
+    const inscricoes=getData('inscricoes').filter(i=>i.voluntarioId!=(vol?vol.id:0));
+    setData('inscricoes',inscricoes);
+    const users=getData('users').filter(u=>u.id!==currentUser.id);
+    setData('users',users);
+    fazerLogout();
+    alert('Conta eliminada com sucesso.');
+}
+
+function guardarPerfilVol(){
+    const nome=document.getElementById('volNome').value.trim();
+    if(!nome){alert('Nome é obrigatório.');return;}
+    const telefone=document.getElementById('volTelefone').value.trim();
+    const localidade=document.getElementById('volLocalidade').value.trim();
+    const vol=getVolByUserId(currentUser.id);
+    if(!vol)return;
+
+    const vols=getData('voluntarios');
+    const idx=vols.findIndex(v=>v.id===vol.id);
+    if(idx>=0){vols[idx].telefone=telefone;vols[idx].localidade=localidade;setData('voluntarios',vols);}
+
+    const users=getData('users');
+    const uidx=users.findIndex(u=>u.id===currentUser.id);
+    if(uidx>=0){users[uidx].nome=nome;setData('users',users);}
+    currentUser.nome=nome;
+
+    alert('Perfil atualizado!');
+    renderVolDashboard();
+}
+
+function guardarInteressesVol(){
+    const checks=document.querySelectorAll('[id^="intCat-"]');
+    const selected=[];
+    checks.forEach(c=>{if(c.checked)selected.push(parseInt(c.value));});
+    setData('voluntario_interesses_'+currentUser.id,selected);
+    alert('Áreas de interesse guardadas!');
+}
+
+function alterarPassVol(){
+    const pass=document.getElementById('volPass').value;
+    const pass2=document.getElementById('volPass2').value;
+    if(!pass||pass.length<6){alert('Password deve ter pelo menos 6 caracteres.');return;}
+    if(pass!==pass2){alert('Passwords não coincidem.');return;}
+    const users=getData('users');
+    const idx=users.findIndex(u=>u.id===currentUser.id);
+    if(idx>=0){users[idx].password=pass;setData('users',users);}
+    alert('Password alterada!');
+    document.getElementById('volPass').value='';
+    document.getElementById('volPass2').value='';
+}
+
+function editarPerfilInst(){
+    const inst=getInstByUserId(currentUser.id);
+    if(!inst)return;
+
+    let html='<div class="card mb-4"><div class="card-body"><h4><i class="bi bi-person-gear"></i> Editar Perfil da Instituição</h4>'+
+        '<div class="row g-3 mt-2">'+
+            '<div class="col-md-8"><label class="form-label">Nome *</label>'+
+            '<input type="text" class="form-control" id="instNome" value="'+inst.nome+'"></div>'+
+            '<div class="col-md-4"><label class="form-label">Tipo</label>'+
+            '<input type="text" class="form-control" value="'+inst.tipo+'" disabled></div>'+
+            '<div class="col-md-6"><label class="form-label">Telefone</label>'+
+            '<input type="text" class="form-control" id="instTelefone" value="'+(inst.telefone||'')+'"></div>'+
+            '<div class="col-md-6"><label class="form-label">Pessoa de Contacto</label>'+
+            '<input type="text" class="form-control" id="instContacto" value="'+(inst.pessoaContacto||'')+'"></div>'+
+            '<div class="col-12"><label class="form-label">Morada</label>'+
+            '<input type="text" class="form-control" id="instMorada" value="'+(inst.morada||'')+'"></div>'+
+            '<div class="col-12"><label class="form-label">Descrição</label>'+
+            '<textarea class="form-control" id="instDesc" rows="3">'+(inst.descricao||'')+'</textarea></div>'+
+            '<div class="col-12 mt-3">'+
+            '<button class="btn btn-primary me-2" onclick="guardarPerfilInst()">Guardar</button>'+
+            '<button class="btn btn-secondary" onclick="renderInstDashboard()">Cancelar</button></div>'+
+        '</div></div></div>';
+    document.getElementById('instOportunidades').innerHTML=html;
+}
+
+function guardarPerfilInst(){
+    const inst=getInstByUserId(currentUser.id);
+    if(!inst)return;
+    const nome=document.getElementById('instNome').value.trim();
+    if(!nome){alert('Nome é obrigatório.');return;}
+
+    const insts=getData('instituicoes');
+    const idx=insts.findIndex(i=>i.id===inst.id);
+    if(idx>=0){
+        insts[idx].nome=nome;
+        insts[idx].telefone=document.getElementById('instTelefone').value.trim();
+        insts[idx].pessoaContacto=document.getElementById('instContacto').value.trim();
+        insts[idx].morada=document.getElementById('instMorada').value.trim();
+        insts[idx].descricao=document.getElementById('instDesc').value.trim();
+        setData('instituicoes',insts);
+    }
+
+    const users=getData('users');
+    const uidx=users.findIndex(u=>u.id===currentUser.id);
+    if(uidx>=0){users[uidx].nome=nome;setData('users',users);}
+    currentUser.nome=nome;
+
+    alert('Perfil atualizado!');
+    renderInstDashboard();
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+    initDB();
+    const saved=localStorage.getItem('currentUser');
+    if(saved){
+        try{currentUser=JSON.parse(saved);}catch(e){currentUser=null;}
+    }
+    showPage('home');
+
+    const catSelect=document.getElementById('criarCat');
+    if(catSelect&&catSelect.options.length<=1){
+        CATEGORIAS.forEach(c=>{catSelect.add(new Option(c.nome,c.id));});
+    }
+});
+
+window.addEventListener('beforeunload',function(){
+    if(currentUser)localStorage.setItem('currentUser',JSON.stringify(currentUser));
+});
+</script>
+</body>
+</html>
