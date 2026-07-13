@@ -113,6 +113,7 @@
             <div class="nav-links" id="navMenu">
                 <a href="#" onclick="showPage('home')">Inicio</a>
                 <a href="#" onclick="showPage('oportunidades')">Oportunidades</a>
+                <a href="#" onclick="showPage('sobre')">Sobre</a>
                 <span class="sep"></span>
                 <a href="#" id="navAdmin" style="display:none" onclick="showPage('admin')">Admin</a>
                 <a href="#" id="navInst" style="display:none" onclick="showPage('inst_dashboard')">Instituicao</a>
@@ -143,9 +144,9 @@
     </div>
     <div class="container" style="padding:24px 16px">
         <div class="row mb-4" style="gap:12px">
-            <div class="col-md-4 mb-0"><div class="card stat-card"><i class="bi bi-calendar-check text-primary" style="font-size:1.5rem"></i><h3 id="statOportunidades">0</h3><p>Oportunidades</p></div></div>
-            <div class="col-md-4 mb-0"><div class="card stat-card"><i class="bi bi-building text-success" style="font-size:1.5rem"></i><h3 id="statInstituicoes">0</h3><p>Instituicoes</p></div></div>
             <div class="col-md-4 mb-0"><div class="card stat-card"><i class="bi bi-people text-warning" style="font-size:1.5rem"></i><h3 id="statVoluntarios">0</h3><p>Voluntarios</p></div></div>
+            <div class="col-md-4 mb-0"><div class="card stat-card"><i class="bi bi-building text-success" style="font-size:1.5rem"></i><h3 id="statInstituicoes">0</h3><p>Instituicoes</p></div></div>
+            <div class="col-md-4 mb-0"><div class="card stat-card"><i class="bi bi-calendar-check text-primary" style="font-size:1.5rem"></i><h3 id="statOportunidades">0</h3><p>Oportunidades</p></div></div>
         </div>
         <h2 class="section-title"><i class="bi bi-star"></i> Destaques</h2>
         <div class="row" id="oportunidadesDestaque"></div>
@@ -171,6 +172,7 @@
                     <button type="submit" class="btn btn-pri" style="width:100%">Entrar</button>
                 </form>
                 <p style="text-align:center;margin-top:16px;font-size:.85rem;color:var(--txt2)">Nao tem conta? <a href="#" onclick="showPage('registo')" style="color:var(--pri);font-weight:600">Registar</a></p>
+                <p style="text-align:center;margin-top:8px"><a href="#" onclick="resetFirestore()" style="font-size:.75rem;color:var(--err);text-decoration:underline">Limpar dados e recomecar</a></p>
             </div>
         </div>
     </div>
@@ -260,6 +262,36 @@
     </div>
 </div>
 
+<!-- SOBRE -->
+<div id="page-sobre" class="page">
+    <div class="container" style="padding:32px 16px;max-width:720px">
+        <h2 class="section-title"><i class="bi bi-info-circle"></i> Sobre a Plataforma</h2>
+        <div class="card" style="padding:24px;margin-bottom:20px">
+            <h4 style="color:var(--pri);margin-bottom:12px">Plataforma de Voluntariado Local</h4>
+            <p>A Plataforma de Voluntariado Local e uma ferramenta digital pensada para a Regiao de Boticas que tem como objetivo facilitar a ligacao entre voluntarios e instituicoes locais.</p>
+            <p>Esta plataforma permite:</p>
+            <ul style="margin-bottom:16px">
+                <li><strong>Voluntarios</strong> — descobrir oportunidades de voluntariado na sua localidade, inscrever-se e acompanhar o estado das suas inscricoes.</li>
+                <li><strong>Instituicoes</strong> — publicar oportunidades, gerir inscricoes e encontrar voluntarios comprometidos.</li>
+                <li><strong>Administracao</strong> — validar instituicoes, monitorizar a atividade da plataforma e garantir a qualidade dos servicos.</li>
+            </ul>
+            <h5 style="color:var(--pri);margin-bottom:8px">Como funciona?</h5>
+            <ol style="margin-bottom:16px">
+                <li>Registe-se como voluntario ou instituicao.</li>
+                <li>As instituicoes publicam oportunidades de voluntariado.</li>
+                <li>Os voluntarios consultam e inscrevem-se nas oportunidades que mais lhes interessam.</li>
+                <li>A instituicao gerem as inscricoes e acompanham a atividade.</li>
+            </ol>
+            <h5 style="color:var(--pri);margin-bottom:8px">Privacidade e RGPD</h5>
+            <p>Os seus dados pessoais sao tratados em conformidade com o Regulamento Geral de Protecao de Dados (RGPD). Os dados sao utilizados exclusivamente para gestao de voluntariado e comunicacao relativa a oportunidades. Pode solicitar a eliminacao da sua conta a qualquer momento.</p>
+        </div>
+        <div class="card" style="padding:24px">
+            <h5 style="color:var(--pri);margin-bottom:8px">Contacto</h5>
+            <p>Para duvidas ou sugestoes, entre em contacto connosco atraves da area de administracao da plataforma.</p>
+        </div>
+    </div>
+</div>
+
 <!-- OPORTUNIDADES -->
 <div id="page-oportunidades" class="page">
     <div class="container" style="padding:24px 16px">
@@ -335,6 +367,40 @@
     </div>
 </div>
 
+<!-- ADMIN CATEGORIAS -->
+<div id="page-admin_categorias" class="page">
+    <div class="container" style="padding:24px 16px">
+        <a class="btn btn-ghost btn-sm" onclick="showPage('admin')" style="margin-bottom:12px"><i class="bi bi-arrow-left"></i> Voltar</a>
+        <h2 class="section-title"><i class="bi bi-tags"></i> Gerir Categorias</h2>
+        <div class="card" style="padding:16px;margin-bottom:16px">
+            <div class="form-row form-row-2">
+                <div><label class="form-label">Nome</label><input type="text" class="form-control" id="novaCatNome"></div>
+                <div><label class="form-label">Descricao</label><input type="text" class="form-control" id="novaCatDesc"></div>
+            </div>
+            <button class="btn btn-pri btn-sm" style="margin-top:8px" onclick="adicionarCategoria()"><i class="bi bi-plus"></i> Adicionar</button>
+        </div>
+        <div class="table-wrap" id="adminCategorias"></div>
+    </div>
+</div>
+
+<!-- ADMIN UTILIZADORES -->
+<div id="page-admin_utilizadores" class="page">
+    <div class="container" style="padding:24px 16px">
+        <a class="btn btn-ghost btn-sm" onclick="showPage('admin')" style="margin-bottom:12px"><i class="bi bi-arrow-left"></i> Voltar</a>
+        <h2 class="section-title"><i class="bi bi-people"></i> Gestao de Utilizadores</h2>
+        <div class="table-wrap" id="adminUtilizadores"></div>
+    </div>
+</div>
+
+<!-- ADMIN RELATORIOS -->
+<div id="page-admin_relatorios" class="page">
+    <div class="container" style="padding:24px 16px">
+        <a class="btn btn-ghost btn-sm" onclick="showPage('admin')" style="margin-bottom:12px"><i class="bi bi-arrow-left"></i> Voltar</a>
+        <h2 class="section-title"><i class="bi bi-bar-chart"></i> Relatorios</h2>
+        <div id="adminRelatoriosConteudo"></div>
+    </div>
+</div>
+
 <!-- INSTITUICAO -->
 <div id="page-inst_dashboard" class="page">
     <div class="container" style="padding:24px 16px">
@@ -358,6 +424,13 @@
 <div id="page-vol_dashboard" class="page">
     <div class="container" style="padding:24px 16px">
         <h2 class="section-title"><i class="bi bi-list-check"></i> As Minhas Inscricoes</h2>
+        <div class="card card-compact" style="margin-bottom:16px">
+            <div class="d-flex gap-2">
+                <button class="btn btn-pri btn-sm" onclick="renderVolDashboard()"><i class="bi bi-list-check"></i> Inscrições</button>
+                <button class="btn btn-ghost btn-sm" onclick="verHistoricoVol()"><i class="bi bi-clock-history"></i> Histórico</button>
+                <button class="btn btn-ghost btn-sm" onclick="renderVolProfile()"><i class="bi bi-person-gear"></i> Perfil</button>
+            </div>
+        </div>
         <div id="volInscricoes"></div>
     </div>
 </div>
@@ -418,7 +491,7 @@ function refreshCurrentPage(){
     if(p==='vol_dashboard')renderVolDashboard();
 }
 
-const ALL_KEYS=['users','instituicoes','voluntarios','oportunidades','inscricoes'];
+const ALL_KEYS=['users','instituicoes','voluntarios','oportunidades','inscricoes','categorias','registosAtividade'];
 
 async function loadAllDataWithListeners(){
     await loadAllData();
@@ -438,37 +511,110 @@ async function loadAllDataWithListeners(){
 }
 
 const CATEGORIAS = [
-    {id:1,nome:'Acao Social'},{id:2,nome:'Ambiente'},{id:3,nome:'Educacao'},
-    {id:4,nome:'Cultura'},{id:5,nome:'Desporto'},{id:6,nome:'Protecao Civil'},
-    {id:7,nome:'Apoio a Idosos'},{id:8,nome:'Eventos'},{id:9,nome:'Juventude'},
-    {id:10,nome:'Saude e Bem-Estar'}
+    {id:1,nome:'Acao Social',descricao:'Atividades de solidariedade e apoio social.',ativa:true},
+    {id:2,nome:'Ambiente',descricao:'Acao ambiental, reciclagem e sustentabilidade.',ativa:true},
+    {id:3,nome:'Educacao',descricao:'Apoio escolar, formacao e alfabetizacao.',ativa:true},
+    {id:4,nome:'Cultura',descricao:'Eventos culturais, arte e patrimonio.',ativa:true},
+    {id:5,nome:'Desporto',descricao:'Atividades desportivas e recreativas.',ativa:true},
+    {id:6,nome:'Protecao Civil',descricao:'Prevencao e socorro em situacoes de emergencia.',ativa:true},
+    {id:7,nome:'Apoio a Idosos',descricao:'Acompanhamento e apoio a pessoas idosas.',ativa:true},
+    {id:8,nome:'Eventos',descricao:'Organizacao e apoiar a eventos comunitarios.',ativa:true},
+    {id:9,nome:'Juventude',descricao:'Atividades para jovens e promocao de cidadania.',ativa:true},
+    {id:10,nome:'Saude e Bem-Estar',descricao:'Promocao da saude e bem-estar da comunidade.',ativa:true}
 ];
 
 async function initDB(){
     let users=getData('users');
-    if(!users.length){
-        users=[
-            {id:1,nome:'Administrador',email:'admin@voluntariado.pt',password:'admin123',perfil:'administrador',ativo:true},
-            {id:2,nome:'Santa Casa da Misericordia',email:'instituicao@email.pt',password:'inst123',perfil:'instituicao',ativo:true},
-            {id:3,nome:'Maria Santos',email:'voluntario@email.pt',password:'vol123',perfil:'voluntario',ativo:true}
-        ];
-        setData('users',users);
-    }
+    const seedUsers=[
+        {id:1,nome:'Administrador',email:'admin@voluntariado.pt',password_hash:'admin123',perfil:'administrador',ativo:true,data_criacao:'2026-07-13T00:00:00',ultimo_acesso:null},
+        {id:2,nome:'Santa Casa da Misericordia',email:'instituicao@email.pt',password_hash:'inst123',perfil:'instituicao',ativo:true,data_criacao:'2026-07-13T00:00:00',ultimo_acesso:null},
+        {id:3,nome:'Maria Santos',email:'voluntario@email.pt',password_hash:'vol123',perfil:'voluntario',ativo:true,data_criacao:'2026-07-13T00:00:00',ultimo_acesso:null},
+        {id:5,nome:'Agrupamento de Escolas de Boticas',email:'escolas@email.pt',password_hash:'esc123',perfil:'instituicao',ativo:true,data_criacao:'2026-07-13T00:00:00',ultimo_acesso:null},
+        {id:6,nome:'Municipio de Boticas',email:'municipio@email.pt',password_hash:'mun123',perfil:'instituicao',ativo:true,data_criacao:'2026-07-13T00:00:00',ultimo_acesso:null},
+        {id:7,nome:'Associacao Cultural de Boticas',email:'cultural@email.pt',password_hash:'cul123',perfil:'instituicao',ativo:true,data_criacao:'2026-07-13T00:00:00',ultimo_acesso:null},
+        {id:8,nome:'GD Boticas',email:'desportivo@email.pt',password_hash:'des123',perfil:'instituicao',ativo:true,data_criacao:'2026-07-13T00:00:00',ultimo_acesso:null},
+        {id:9,nome:'Ana Rodrigues',email:'ana@email.pt',password_hash:'vol123',perfil:'voluntario',ativo:true,data_criacao:'2026-07-13T00:00:00',ultimo_acesso:null}
+    ];
+    let changed=false;
+    seedUsers.forEach(su=>{
+        if(!users.find(u=>u.email===su.email)){
+            users.push(su);
+            changed=true;
+        }else{
+            const existing=users.find(u=>u.email===su.email);
+            if(existing.password_hash!==su.password_hash){
+                existing.password_hash=su.password_hash;
+                changed=true;
+            }
+        }
+    });
+    if(changed)setData('users',users);
     let insts=getData('instituicoes');
     if(!insts.find(i=>i.userId===2)){
-        insts.push({id:nextId('instituicoes'),userId:2,nome:'Santa Casa da Misericordia',nif:'500000001',tipo:'IPSS',email:'instituicao@email.pt',telefone:'278600000',pessoaContacto:'Dr. Manuel',descricao:'Instituicao de solidariedade social.',estadoValidacao:'aprovada'});
+        insts.push({id:nextId('instituicoes'),userId:2,nome:'Santa Casa da Misericordia',nif:'500000001',tipo:'IPSS',morada:'Rua da Misericordia, Boticas',email:'instituicao@email.pt',telefone:'278600000',pessoaContacto:'Dr. Manuel',descricao:'Instituicao de solidariedade social.',estadoValidacao:'aprovada'});
+        setData('instituicoes',insts);
+    }
+    if(!insts.find(i=>i.userId===5)){
+        insts.push({id:nextId('instituicoes'),userId:5,nome:'Agrupamento de Escolas de Boticas',nif:'500000003',tipo:'Escola',morada:'Rua da Escola, Boticas',email:'escolas@email.pt',telefone:'278600200',pessoaContacto:'Dra. Teresa',descricao:'Agrupamento de escolas do concelho de Boticas.',estadoValidacao:'aprovada'});
+        setData('instituicoes',insts);
+    }
+    if(!insts.find(i=>i.userId===6)){
+        insts.push({id:nextId('instituicoes'),userId:6,nome:'Municipio de Boticas',nif:'500000004',tipo:'Municipio',morada:'Praca do Municipio, Boticas',email:'municipio@email.pt',telefone:'278600300',pessoaContacto:'Dr. Carlos',descricao:'Camara Municipal de Boticas.',estadoValidacao:'aprovada'});
+        setData('instituicoes',insts);
+    }
+    if(!insts.find(i=>i.userId===7)){
+        insts.push({id:nextId('instituicoes'),userId:7,nome:'Associacao Cultural de Boticas',nif:'500000005',tipo:'Associacao',morada:'Rua da Cultura, Boticas',email:'cultural@email.pt',telefone:'278600400',pessoaContacto:'Dra. Sofia',descricao:'Associacao para divulgacao cultural no concelho.',estadoValidacao:'aprovada'});
+        setData('instituicoes',insts);
+    }
+    if(!insts.find(i=>i.userId===8)){
+        insts.push({id:nextId('instituicoes'),userId:8,nome:'GD Boticas',nif:'500000006',tipo:'Clube Desportivo',morada:'Estadio Municipal, Boticas',email:'desportivo@email.pt',telefone:'278600500',pessoaContacto:'Antonio Ferreira',descricao:'Grupo Desportivo e Cultural de Boticas.',estadoValidacao:'aprovada'});
         setData('instituicoes',insts);
     }
     let vols=getData('voluntarios');
     if(!vols.find(v=>v.userId===3)){
-        vols.push({id:nextId('voluntarios'),userId:3,telefone:'912345678',localidade:'Boticas'});
+        vols.push({id:nextId('voluntarios'),userId:3,telefone:'912345678',localidade:'Boticas',dataNascimento:'1990-05-15',disponibilidade:'fins_de_semana',interesses:[1,2],competencias:'Primeiro socorro, informatica',consentimentoDados:true,dataConsentimento:'2026-07-13T00:00:00'});
         setData('voluntarios',vols);
+    }
+    if(!vols.find(v=>v.userId===9)){
+        vols.push({id:nextId('voluntarios'),userId:9,telefone:'963258741',localidade:'Boticas',dataNascimento:'1995-08-20',disponibilidade:'manhas',interesses:[3,4,8],competencias:'Ensino, animacao',consentimentoDados:true,dataConsentimento:'2026-07-13T00:00:00'});
+        setData('voluntarios',vols);
+    }
+    let cats=getData('categorias');
+    if(!cats.length){
+        CATEGORIAS.forEach(c=>{cats.push({id:c.id,nome:c.nome,descricao:c.descricao,ativa:c.ativa});});
+        setData('categorias',cats);
+    }
+    let ops=getData('oportunidades');
+    if(!ops.length){
+        ops.push(
+            {id:nextId('oportunidades'),instituicaoId:1,categoriaId:1,titulo:'Apoio a familias carenciadas',descricao:'Distribuicao de alimentacao e vestuario a familias necessitadas na regiao de Boticas.',local:'Boticas',freguesia:'Boticas',horario:'Seg-Sex 9h-12h',dataInicio:'2026-08-01',dataFim:'2026-12-31',vagas:5,requisitos:'Maior de 18 anos',competencias:'Empatia, comunicacao',idadeMinima:18,estado:'inscricoes_abertas',criadaEm:new Date().toISOString(),publicadaEm:new Date().toISOString()},
+            {id:nextId('oportunidades'),instituicaoId:1,categoriaId:7,titulo:'Visitas a idosos isolados',descricao:'Acompanhamento semanal a pessoas idosas que vivem sozinhas.',local:'Boticas',freguesia:'Vilar de Cima',horario:'Ter e Qui 14h-17h',dataInicio:'2026-08-15',dataFim:'2026-11-30',vagas:3,requisitos:'Paciencia e disponibilidade',competencias:'Escuta ativa',idadeMinima:16,estado:'inscricoes_abertas',criadaEm:new Date().toISOString(),publicadaEm:new Date().toISOString()},
+            {id:nextId('oportunidades'),instituicaoId:3,categoriaId:4,titulo:'Apoio em evento cultural',descricao:'Apoio a organizacao do Festival Cultural de Boticas.',local:'Boticas',freguesia:'Boticas',horario:'Sab-Dom 10h-18h',dataInicio:'2026-09-20',dataFim:'2026-09-21',vagas:10,requisitos:'Disponibilidade no fim de semana',competencias:'Organizacao, trabalho em equipa',idadeMinima:14,estado:'inscricoes_abertas',criadaEm:new Date().toISOString(),publicadaEm:new Date().toISOString()},
+            {id:nextId('oportunidades'),instituicaoId:3,categoriaId:4,titulo:'Recolha de bens alimentares',descricao:'Recolha e organizacao de donativos alimentares para cabazes solidarios.',local:'Boticas',freguesia:'Boticas',horario:'Seg-Sex 9h-17h',dataInicio:'2026-10-01',dataFim:'2026-12-20',vagas:6,requisitos:'Nenhum',competencias:'Organizacao, logistica',idadeMinima:14,estado:'inscricoes_abertas',criadaEm:new Date().toISOString(),publicadaEm:new Date().toISOString()},
+            {id:nextId('oportunidades'),instituicaoId:4,categoriaId:3,titulo:'Apoio em atividades educativas',descricao:'Apoio a atividades extraescolares no Agrupamento de Escolas.',local:'Boticas',freguesia:'Boticas',horario:'Seg-Qui 15h-17h',dataInicio:'2026-09-15',dataFim:'2027-06-15',vagas:4,requisitos:'Ensino superior ou estudante universitario',competencias:'Ensino, comunicacao',idadeMinima:18,estado:'inscricoes_abertas',criadaEm:new Date().toISOString(),publicadaEm:new Date().toISOString()},
+            {id:nextId('oportunidades'),instituicaoId:2,categoriaId:1,titulo:'Distribuicao de cabazes natalicios',descricao:'Montagem e distribuicao de cabazes de Natal a familias carenciadas.',local:'Boticas',freguesia:'Boticas',horario:'Seg-Sex 9h-12h',dataInicio:'2026-12-01',dataFim:'2026-12-23',vagas:8,requisitos:'Maior de 16 anos',competencias:'Organizacao, fisico',idadeMinima:16,estado:'inscricoes_abertas',criadaEm:new Date().toISOString(),publicadaEm:new Date().toISOString()},
+            {id:nextId('oportunidades'),instituicaoId:5,categoriaId:2,titulo:'Limpeza de espaco verde',descricao:'Limpeza e manutencao do Parque Municipal de Boticas.',local:'Boticas',freguesia:'Boticas',horario:'Sab 9h-12h',dataInicio:'2026-08-10',dataFim:'2026-11-30',vagas:12,requisitos:'Vestuario adequado',competencias:'Trabalho fisico',idadeMinima:14,estado:'inscricoes_abertas',criadaEm:new Date().toISOString(),publicadaEm:new Date().toISOString()},
+            {id:nextId('oportunidades'),instituicaoId:5,categoriaId:1,titulo:'Apoio administrativo pontual',descricao:'Apoio em tarefas administrativas na Camara Municipal.',local:'Boticas',freguesia:'Boticas',horario:'Seg-Sex 9h-12h',dataInicio:'2026-08-01',dataFim:'2026-10-31',vagas:2,requisitos:'Conhecimentos informaticos',competencias:'Informatica, organizacao',idadeMinima:18,estado:'inscricoes_abertas',criadaEm:new Date().toISOString(),publicadaEm:new Date().toISOString()},
+            {id:nextId('oportunidades'),instituicaoId:6,categoriaId:5,titulo:'Apoio logistico em prova desportiva',descricao:'Apoio na organizacao da Corrida de Sao Mamede.',local:'Boticas',freguesia:'Boticas',horario:'Dom 8h-14h',dataInicio:'2026-10-12',dataFim:'2026-10-12',vagas:15,requisitos:'Disponibilidade',competencias:'Organizacao, logistica',idadeMinima:14,estado:'inscricoes_abertas',criadaEm:new Date().toISOString(),publicadaEm:new Date().toISOString()},
+            {id:nextId('oportunidades'),instituicaoId:6,categoriaId:2,titulo:'Limpeza de espaco verde',descricao:'Apoio na limpeza de trilhos e percursos pedestres.',local:'Boticas',freguesia:'Vilar de Cima',horario:'Sab 9h-13h',dataInicio:'2026-09-01',dataFim:'2026-11-30',vagas:8,requisitos:'Vestuario adequado',competencias:'Trabalho fisico',idadeMinima:14,estado:'inscricoes_abertas',criadaEm:new Date().toISOString(),publicadaEm:new Date().toISOString()}
+        );
+        setData('oportunidades',ops);
     }
 }
 
 function resetDB(){
     localStorage.clear();
     location.reload();
+}
+
+function resetFirestore(){
+    if(!confirm('Isto ira apagar TODOS os dados da plataforma (users, oportunidades, inscricoes, etc.) e recomecar do zero. Continuar?'))return;
+    const promises=ALL_KEYS.map(k=>db.collection('dados').doc(k).delete().catch(()=>{}));
+    Promise.all(promises).then(()=>{
+        cache={};
+        localStorage.clear();
+        location.reload();
+    });
 }
 
 function getUserByEmail(e){return getData('users').find(u=>u.email===e);}
@@ -480,6 +626,12 @@ function getInscricoesByOp(id){return getData('inscricoes').filter(i=>i.oportuni
 function statusBadge(estado){
     const m={'rascunho':'badge-gray','publicado':'badge-pri','inscricoes_abertas':'badge-ok','encerradas':'badge-warn','concluida':'badge-dark','aceite':'badge-success','cancelada':'badge-err','pendente_aprovacao':'badge-warn'};
     return '<span class="badge '+(m[estado]||'badge-gray')+'">'+estado.replace(/_/g,' ')+'</span>';
+}
+
+function registarAtividade(userId,acao,entidade,entidadeId,detalhe){
+    const logs=getData('registosAtividade');
+    logs.push({id:nextId('registosAtividade'),userId:userId,acao:acao,entidade:entidade,entidadeId:entidadeId,dataHora:new Date().toISOString(),detalhe:detalhe||null});
+    setData('registosAtividade',logs);
 }
 
 function showPage(p){
@@ -688,17 +840,27 @@ function inscrever(opId){
     const tel=document.getElementById('inscTel').value.trim();
     const motiv=document.getElementById('inscMotiv').value.trim();
     if(!tel){alert('Preencha o telefone.');return;}
+    const op=getOportunidadeById(opId);
+    if(!op)return;
+    if(op.estado==='cancelada'||op.estado==='concluida'){alert('Esta oportunidade ja nao aceita inscricoes.');return;}
     const inscricoes=getData('inscricoes');
+    const existente=inscricoes.find(i=>i.oportunidadeId===opId&&i.voluntarioId===vol.id);
+    if(existente){alert('Ja esta inscrito nesta oportunidade.');return;}
+    const inscOp=inscricoes.filter(i=>i.oportunidadeId===opId);
+    if(op.vagas&&inscOp.length>=op.vagas){alert('Nao ha vagas disponiveis.');return;}
     inscricoes.push({
         id:nextId('inscricoes'),
         oportunidadeId:opId,
         voluntarioId:vol.id,
         telefone:tel,
-        motivação:motiv,
+        mensagem:motiv,
         estado:'pendente',
-        dataInscricao:new Date().toISOString()
+        dataInscricao:new Date().toISOString(),
+        dataDecisao:null,
+        observacoesInstituicao:''
     });
     setData('inscricoes',inscricoes);
+    registrarAtividade(currentUser.id,'inscrever','oportunidade',opId,'Inscrição na oportunidade #'+opId);
     alert('Inscrição realizada com sucesso!');
     verDetalhe(opId);
 }
@@ -708,11 +870,14 @@ function desinscrever(opId){
     if(!confirm('Tem a certeza que pretende cancelar a inscrição?'))return;
     const vol=getVolByUserId(currentUser.id);
     if(!vol)return;
+    const op=getOportunidadeById(opId);
+    if(op&&op.estado==='concluida'){alert('Nao pode cancelar inscricao de uma oportunidade concluida.');return;}
     let inscricoes=getData('inscricoes');
     const idx=inscricoes.findIndex(i=>i.oportunidadeId===opId&&i.voluntarioId===vol.id);
     if(idx<0){alert('Inscrição não encontrada.');return;}
     inscricoes.splice(idx,1);
     setData('inscricoes',inscricoes);
+    registarAtividade(currentUser.id,'desinscrever','oportunidades',opId,'Inscrição cancelada na oportunidade #'+opId);
     alert('Inscrição cancelada com sucesso.');
     verDetalhe(opId);
 }
@@ -726,9 +891,15 @@ function fazerLogin(e){
     if(!email||!pass){errEl.textContent='Introduza o email e a password para entrar.';errEl.style.display='block';return;}
     const user=getUserByEmail(email);
     if(!user){errEl.textContent='Email nao encontrado. Verifique o email ou crie uma conta.';errEl.style.display='block';return;}
-    if(user.password!==pass){errEl.textContent='Password incorreta. Tente novamente.';errEl.style.display='block';return;}
+    if(user.password_hash!==pass){errEl.textContent='Password incorreta. Tente novamente.';errEl.style.display='block';return;}
+    user.ultimo_acesso=new Date().toISOString();
+    const users=getData('users');
+    const idx=users.findIndex(u=>u.id===user.id);
+    if(idx>=0)users[idx].ultimo_acesso=user.ultimo_acesso;
+    setData('users',users);
     currentUser=user;
     localStorage.setItem('currentUser',JSON.stringify(currentUser));
+    registarAtividade(user.id,'login','utilizador',user.id,'Login realizado');
     document.getElementById('loginEmail').value='';
     document.getElementById('loginPass').value='';
     if(user.perfil==='administrador')showPage('admin');
@@ -750,6 +921,7 @@ function fazerRegisto(e){
         const pass2=document.getElementById('regPass2Inst').value;
         const tipo=document.getElementById('regTipoInst').value;
         if(!nome||!email||!pass||!nif||!tipo){errEl.textContent='Preencha todos os campos marcados com * (nome, email, NIF, tipo e password).';errEl.style.display='block';return;}
+        if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){errEl.textContent='Introduza um email valido.';errEl.style.display='block';return;}
         if(nif.length!==9||!/^\d+$/.test(nif)){errEl.textContent='O NIF deve ter exatamente 9 digitos numericos.';errEl.style.display='block';return;}
         if(pass!==pass2){errEl.textContent='As passwords nao coincidem. Confirme a password.';errEl.style.display='block';return;}
         if(pass.length<6){errEl.textContent='A password deve ter pelo menos 6 caracteres.';errEl.style.display='block';return;}
@@ -758,13 +930,13 @@ function fazerRegisto(e){
 
         const users=getData('users');
         const newId=nextId('users');
-        users.push({id:newId,nome:nome,email:email,password:pass,perfil:'instituicao',ativo:true});
+        users.push({id:newId,nome:nome,email:email,password_hash:pass,perfil:'instituicao',ativo:true,data_criacao:new Date().toISOString(),ultimo_acesso:null});
         setData('users',users);
 
         const insts=getData('instituicoes');
         insts.push({
             id:nextId('instituicoes'),userId:newId,nome:nome,
-            nif:nif,tipo:tipo,email:email,
+            nif:nif,tipo:tipo,morada:document.getElementById('regMorada').value.trim(),email:email,
             telefone:document.getElementById('regTelefoneInst').value.trim(),
             pessoaContacto:document.getElementById('regContacto').value.trim(),
             descricao:document.getElementById('regDescInst').value.trim(),
@@ -780,6 +952,7 @@ function fazerRegisto(e){
         const telefone=document.getElementById('regTelefone').value.trim();
         const localidade=document.getElementById('regLocalidade').value.trim();
         if(!nome||!email||!pass||!telefone||!localidade){errEl.textContent='Preencha todos os campos marcados com * (nome, email, telefone, localidade e password).';errEl.style.display='block';return;}
+        if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){errEl.textContent='Introduza um email valido.';errEl.style.display='block';return;}
         if(pass!==pass2){errEl.textContent='As passwords nao coincidem. Confirme a password.';errEl.style.display='block';return;}
         if(pass.length<6){errEl.textContent='A password deve ter pelo menos 6 caracteres.';errEl.style.display='block';return;}
         if(getUserByEmail(email)){errEl.textContent='Este email ja esta registado. Faca login ou use outro email.';errEl.style.display='block';return;}
@@ -788,7 +961,7 @@ function fazerRegisto(e){
 
         const users=getData('users');
         const newId=nextId('users');
-        users.push({id:newId,nome:nome,email:email,password:pass,perfil:'voluntario',ativo:true});
+        users.push({id:newId,nome:nome,email:email,password_hash:pass,perfil:'voluntario',ativo:true,data_criacao:new Date().toISOString(),ultimo_acesso:null});
         setData('users',users);
 
         const interessesIds=[];
@@ -803,12 +976,13 @@ function fazerRegisto(e){
             dataNascimento:document.getElementById('regDataNasc').value||null,
             disponibilidade:document.getElementById('regDisponibilidade').value,
             competencias:document.getElementById('regCompetencias').value.trim(),
-            consentimentoDados:true,
+            consentimentoDados:true,dataConsentimento:new Date().toISOString(),
             interesses:interessesIds
         });
         setData('voluntarios',vols);
     }
     alert('Registo realizado! Pode fazer login.');
+    registarAtividade(newId,'registar','utilizador',newId,'Registo de '+perfil);
     showPage('login');
 }
 
@@ -890,19 +1064,19 @@ function renderAdmin(){
 function aprovarInst(id){
     const insts=getData('instituicoes');
     const inst=insts.find(i=>i.id===id);
-    if(inst){inst.estadoValidacao='aprovada';setData('instituicoes',insts);renderAdmin();}
+    if(inst){inst.estadoValidacao='aprovada';setData('instituicoes',insts);registarAtividade(currentUser.id,'aprovar_instituicao','instituicoes',id,'Instituição aprovada: '+inst.nome);renderAdmin();}
 }
 function rejeitarInst(id){
     if(!confirm('Rejeitar esta instituição?'))return;
     const insts=getData('instituicoes');
     const idx=insts.findIndex(i=>i.id===id);
-    if(idx>=0){insts.splice(idx,1);setData('instituicoes',insts);renderAdmin();}
+    if(idx>=0){registarAtividade(currentUser.id,'rejeitar_instituicao','instituicoes',id,'Instituição rejeitada');insts.splice(idx,1);setData('instituicoes',insts);renderAdmin();}
 }
 function suspenderInst(id){
     if(!confirm('Suspender esta instituição?'))return;
     const insts=getData('instituicoes');
     const inst=insts.find(i=>i.id===id);
-    if(inst){inst.estadoValidacao='suspensa';setData('instituicoes',insts);renderAdmin();}
+    if(inst){inst.estadoValidacao='suspensa';setData('instituicoes',insts);registarAtividade(currentUser.id,'suspender_instituicao','instituicoes',id,'Instituição suspensa: '+inst.nome);renderAdmin();}
 }
 function aprovarInsc(id){
     const inscricoes=getData('inscricoes');
@@ -917,13 +1091,13 @@ function rejeitarInsc(id){
 function aceitarConclusao(id){
     const ops=getData('oportunidades');
     const o=ops.find(x=>x.id===id);
-    if(o){o.estado='aceite';setData('oportunidades',ops);renderAdmin();alert('Conclusão aceite!');}
+    if(o){o.estado='aceite';setData('oportunidades',ops);registarAtividade(currentUser.id,'aceitar_conclusao','oportunidades',id,'Conclusão aceite: '+o.titulo);renderAdmin();alert('Conclusão aceite!');}
 }
 function rejeitarConclusao(id){
     if(!confirm('Rejeitar conclusão? Oportunidade volta a estar ativa.'))return;
     const ops=getData('oportunidades');
     const o=ops.find(x=>x.id===id);
-    if(o){o.estado='inscricoes_abertas';setData('oportunidades',ops);renderAdmin();}
+    if(o){o.estado='inscricoes_abertas';setData('oportunidades',ops);registarAtividade(currentUser.id,'rejeitar_conclusao','oportunidades',id,'Conclusão rejeitada: '+o.titulo);renderAdmin();}
 }
 function aprovarOp(id){
     const ops=getData('oportunidades');
@@ -937,6 +1111,112 @@ function rejeitarOp(id){
     if(o){o.estado='cancelada';setData('oportunidades',ops);renderAdmin();}
 }
 
+function renderAdminCategorias(){
+    const cats=getData('categorias');
+    let html='<table class="table table-hover"><thead><tr><th>ID</th><th>Nome</th><th>Descricao</th><th>Ativa</th><th>Acoes</th></tr></thead><tbody>';
+    cats.forEach(c=>{
+        html+='<tr><td>'+c.id+'</td><td>'+c.nome+'</td><td>'+(c.descricao||'')+'</td>'+
+            '<td>'+(c.ativa?'<span class="badge bg-success">Sim</span>':'<span class="badge bg-secondary">Nao</span>')+'</td>'+
+            '<td><button class="btn btn-outline-danger btn-sm" onclick="eliminarCategoria('+c.id+')"><i class="bi bi-trash"></i></button></td></tr>';
+    });
+    html+='</tbody></table>';
+    document.getElementById('adminCategorias').innerHTML=html;
+}
+
+function adicionarCategoria(){
+    const nome=document.getElementById('novaCatNome').value.trim();
+    const desc=document.getElementById('novaCatDesc').value.trim();
+    if(!nome){alert('Nome e obrigatorio.');return;}
+    const cats=getData('categorias');
+    cats.push({id:nextId('categorias'),nome:nome,descricao:desc,ativa:true});
+    setData('categorias',cats);
+    document.getElementById('novaCatNome').value='';
+    document.getElementById('novaCatDesc').value='';
+    renderAdminCategorias();
+}
+
+function eliminarCategoria(id){
+    if(!confirm('Eliminar esta categoria?'))return;
+    let cats=getData('categorias');
+    cats=cats.filter(c=>c.id!==id);
+    setData('categorias',cats);
+    renderAdminCategorias();
+}
+
+function renderAdminUtilizadores(){
+    const users=getData('users');
+    const insts=getData('instituicoes');
+    const vols=getData('voluntarios');
+    const instMap=Object.fromEntries(insts.map(i=>[i.userId,i]));
+    const volMap=Object.fromEntries(vols.map(v=>[v.userId,v]));
+    let html='<table class="table table-hover"><thead><tr><th>ID</th><th>Nome</th><th>Email</th><th>Perfil</th><th>Ativo</th><th>Criado</th><th>Ultimo Acesso</th></tr></thead><tbody>';
+    users.forEach(u=>{
+        const ec=u.ativo?'success':'secondary';
+        html+='<tr><td>'+u.id+'</td><td>'+u.nome+'</td><td>'+u.email+'</td>'+
+            '<td><span class="badge bg-'+(u.perfil==='administrador'?'danger':u.perfil==='instituicao'?'primary':'success')+'">'+u.perfil+'</span></td>'+
+            '<td><span class="badge bg-'+ec+'">'+(u.ativo?'Sim':'Nao')+'</span></td>'+
+            '<td>'+(u.data_criacao?u.data_criacao.substring(0,10):'')+'</td>'+
+            '<td>'+(u.ultimo_acesso?u.ultimo_acesso.substring(0,10):'Nunca')+'</td></tr>';
+    });
+    html+='</tbody></table>';
+    document.getElementById('adminUtilizadores').innerHTML=html;
+}
+
+function renderAdminRelatorios(){
+    const users=getData('users');
+    const ops=getData('oportunidades');
+    const inscs=getData('inscricoes');
+    const insts=getData('instituicoes');
+    const cats=getData('categorias');
+    const vols=getData('voluntarios');
+    const logs=getData('registosAtividade');
+
+    const totalUsers=users.length;
+    const totalVol=users.filter(u=>u.perfil==='voluntario').length;
+    const totalInst=insts.length;
+    const instAprovadas=insts.filter(i=>i.estadoValidacao==='aprovada').length;
+    const totalOps=ops.length;
+    const opsAbertas=ops.filter(o=>o.estado==='inscricoes_abertas').length;
+    const opsConcluidas=ops.filter(o=>o.estado==='concluida').length;
+    const totalInscs=inscs.length;
+    const inscPendentes=inscs.filter(i=>i.estado==='pendente').length;
+    const inscAprovadas=inscs.filter(i=>i.estado==='aprovada').length;
+
+    let html='<div class="row" style="gap:12px;margin-bottom:24px">';
+    html+='<div class="card stat-card" style="flex:1;min-width:140px"><h3>'+totalUsers+'</h3><p>Utilizadores</p></div>';
+    html+='<div class="card stat-card" style="flex:1;min-width:140px"><h3>'+totalVol+'</h3><p>Voluntarios</p></div>';
+    html+='<div class="card stat-card" style="flex:1;min-width:140px"><h3>'+totalInst+'</h3><p>Instituicoes ('+instAprovadas+' aprovadas)</p></div>';
+    html+='<div class="card stat-card" style="flex:1;min-width:140px"><h3>'+totalOps+'</h3><p>Oportunidades ('+opsAbertas+' abertas)</p></div>';
+    html+='<div class="card stat-card" style="flex:1;min-width:140px"><h3>'+totalInscs+'</h3><p>Inscricoes ('+inscPendentes+' pendentes)</p></div>';
+    html+='</div>';
+
+    html+='<h5 class="section-title"><i class="bi bi-pie-chart"></i> Inscricoes por Categoria</h5>';
+    html+='<table class="table table-hover"><thead><tr><th>Categoria</th><th>Inscricoes</th></tr></thead><tbody>';
+    cats.forEach(c=>{
+        const catOps=ops.filter(o=>o.categoriaId===c.id).map(o=>o.id);
+        const catInscs=inscs.filter(i=>catOps.includes(i.oportunidadeId)).length;
+        html+='<tr><td>'+c.nome+'</td><td>'+catInscs+'</td></tr>';
+    });
+    html+='</tbody></table>';
+
+    html+='<h5 class="section-title" style="margin-top:20px"><i class="bi bi-clock-history"></i> Atividade Recente</h5>';
+    const recentLogs=logs.slice(-10).reverse();
+    if(recentLogs.length){
+        html+='<table class="table table-hover"><thead><tr><th>Data</th><th>Acao</th><th>Entidade</th><th>Detalhe</th></tr></thead><tbody>';
+        recentLogs.forEach(l=>{
+            html+='<tr><td>'+(l.dataHora?l.dataHora.substring(0,16).replace('T',' '):'')+'</td>'+
+                '<td><span class="badge bg-primary">'+l.acao+'</span></td>'+
+                '<td>'+l.entidade+' #'+l.entidadeId+'</td>'+
+                '<td>'+(l.detalhe||'')+'</td></tr>';
+        });
+        html+='</tbody></table>';
+    }else{
+        html+='<p class="text-muted">Nenhuma atividade registada.</p>';
+    }
+
+    document.getElementById('adminRelatoriosConteudo').innerHTML=html;
+}
+
 function renderInstDashboard(){
     if(!currentUser||currentUser.perfil!=='instituicao')return;
     const inst=getInstByUserId(currentUser.id);
@@ -948,7 +1228,7 @@ function renderInstDashboard(){
     let html='<div class="d-flex justify-content-between align-items-center mb-4">'+
         '<h4>Minhas Oportunidades</h4>'+
         '<div><button class="btn btn-outline-secondary me-2" onclick="editarPerfilInst()"><i class="bi bi-person-gear"></i> Perfil</button>'+
-        '<button class="btn btn-primary" onclick="showCriarOportunidade()">+ Criar Oportunidade</button></div>'+
+        (inst.estadoValidacao==='aprovada'?'<button class="btn btn-primary" onclick="showCriarOportunidade()">+ Criar Oportunidade</button>':'<span class="badge bg-warning">Aguardando aprovacao da conta</span>')+'</div>'+
     '</div>';
 
     html+='<div class="table-responsive"><table class="table table-hover"><thead><tr>'+
@@ -1023,6 +1303,7 @@ function criarOportunidade(e){
     if(!titulo){alert('O título é obrigatório.');return;}
     const inst=getInstByUserId(currentUser.id);
     if(!inst)return;
+    if(inst.estadoValidacao!=='aprovada'){alert('A sua conta ainda nao foi aprovada pelo administrador.');return;}
     const ops=getData('oportunidades');
     ops.push({
         id:nextId('oportunidades'),
@@ -1040,7 +1321,8 @@ function criarOportunidade(e){
         competências:document.getElementById('criarComp').value.trim(),
         idadeMinima:parseInt(document.getElementById('criarIdadeMin').value)||null,
         estado:'inscricoes_abertas',
-        criadaEm:new Date().toISOString()
+        criadaEm:new Date().toISOString(),
+        publicadaEm:new Date().toISOString()
     });
     setData('oportunidades',ops);
     alert('Oportunidade criada e publicada!');
@@ -1068,8 +1350,10 @@ function guardarNovaOportunidade(){
         vagas:parseInt(document.getElementById('newVagas').value)||1,
         requisitos:document.getElementById('newRequisitos').value.trim(),
         competências:document.getElementById('newComp').value.trim(),
+        idadeMinima:parseInt(document.getElementById('newIdadeMin')?.value)||null,
         estado:document.getElementById('newEstado').value,
-        criadaEm:new Date().toISOString()
+        criadaEm:new Date().toISOString(),
+        publicadaEm:new Date().toISOString()
     };
     ops.push(newOp);
     setData('oportunidades',ops);
@@ -1142,6 +1426,7 @@ function concluirOportunidade(id){
     if(idx<0)return;
     ops[idx].estado='concluida';
     setData('oportunidades',ops);
+    registarAtividade(currentUser.id,'concluir_oportunidade','oportunidades',id,'Oportunidade concluída: '+ops[idx].titulo);
     alert('Oportunidade concluída!');
     renderInstDashboard();
 }
@@ -1149,8 +1434,10 @@ function concluirOportunidade(id){
 function eliminarOportunidade(id){
     if(!confirm('Eliminar esta oportunidade?'))return;
     let ops=getData('oportunidades');
+    const op=ops.find(o=>o.id===id);
     ops=ops.filter(o=>o.id!==id);
     setData('oportunidades',ops);
+    registarAtividade(currentUser.id,'eliminar_oportunidade','oportunidades',id,'Oportunidade eliminada: '+(op?op.titulo:id));
     renderInstDashboard();
 }
 
@@ -1179,7 +1466,7 @@ function verInscritos(opId){
             '<td>'+(volUser?volUser.email:'N/D')+'</td>'+
             '<td>'+insc.telefone+'</td>'+
             '<td>'+(vol?vol.localidade:'')+'</td>'+
-            '<td>'+(insc.motivação||insc.motivacao||'-')+'</td>'+
+            '<td>'+(insc.mensagem||insc.motivação||insc.motivacao||'-')+'</td>'+
             '<td><span class="badge bg-'+ec+'">'+insc.estado+'</span></td>'+
             '<td>'+
                 (insc.estado==='pendente'?'<button class="btn btn-success btn-sm me-1" onclick="aprovarInsc('+insc.id+');verInscritos('+opId+')">Aprovar</button><button class="btn btn-danger btn-sm" onclick="rejeitarInsc('+insc.id+');verInscritos('+opId+')">Rejeitar</button>':'—')+
@@ -1201,7 +1488,7 @@ function exportarInscritos(opId){
     inscricoes.forEach(insc=>{
         const vol=vols.find(v=>v.id===insc.voluntarioId);
         const volUser=vol?users.find(u=>u.id===vol.userId):null;
-        csv+=insc.id+',"'+(volUser?volUser.nome:'N/D')+'","'+(volUser?volUser.email:'N/D')+'","'+insc.telefone+'","'+(vol?vol.localidade:'')+'","'+(insc.motivação||insc.motivacao||'')+'",'+insc.estado+','+(insc.dataInscricao?insc.dataInscricao.substring(0,10):'')+'\n';
+        csv+=insc.id+',"'+(volUser?volUser.nome:'N/D')+'","'+(volUser?volUser.email:'N/D')+'","'+insc.telefone+'","'+(vol?vol.localidade:'')+'","'+(insc.mensagem||insc.motivação||insc.motivacao||'')+'",'+insc.estado+','+(insc.dataInscricao?insc.dataInscricao.substring(0,10):'')+'\n';
     });
 
     const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
