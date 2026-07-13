@@ -10,6 +10,7 @@
         :root{--pri:#2563eb;--pri-d:#1d4ed8;--pri-l:#eff6ff;--ok:#16a34a;--ok-l:#f0fdf4;--warn:#ea580c;--warn-l:#fff7ed;--err:#dc2626;--err-l:#fef2f2;--txt:#1e293b;--txt2:#64748b;--bg:#f8fafc;--radius:10px;--shadow:0 1px 3px rgba(0,0,0,.08)}
         *{box-sizing:border-box}
         body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);margin:0;min-height:100vh;display:flex;flex-direction:column;font-size:15px}
+        body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:url("https://terracallaeci.pt/wp-content/uploads/2017/02/DJI_0611.jpg") center/cover no-repeat;filter:blur(3px);opacity:.12;z-index:-1;pointer-events:none}
         .page{display:none}.page.active{display:block}
 
         nav{background:rgba(37,99,235,.95);padding:10px 0;position:sticky;top:0;z-index:100;backdrop-filter:blur(8px)}
@@ -37,7 +38,7 @@
         .video-bg{width:100%;margin:24px 0}
         .video-bg iframe{width:100%;aspect-ratio:16/9;border:none;border-radius:12px}
 
-        .card{border:none;box-shadow:var(--shadow);border-radius:var(--radius);overflow:hidden}
+        .card{border:2px solid #cbd5e1;box-shadow:var(--shadow);border-radius:var(--radius);overflow:hidden;background:#fff}
         .stat-card{text-align:center;padding:24px 16px}
         .stat-card h3{font-size:1.8rem;font-weight:700;color:var(--pri);margin:8px 0 4px}
         .stat-card p{color:var(--txt2);font-size:.85rem;margin:0}
@@ -309,10 +310,8 @@
                 <div class="form-row form-row-2" style="margin-bottom:16px">
                     <div><label class="form-label">Idade Minima</label><input type="number" class="form-control" id="criarIdadeMin" min="0" max="99"></div>
                     <div><label class="form-label">Estado</label>
-                        <select class="form-select" id="criarEstado">
-                            <option value="rascunho">Rascunho</option>
-                            <option value="publicado">Publicado</option>
-                            <option value="inscricoes_abertas">Inscricoes Abertas</option>
+                        <select class="form-select" id="criarEstado" disabled>
+                            <option value="inscricoes_abertas" selected>Inscrições Abertas</option>
                         </select>
                     </div>
                 </div>
@@ -405,11 +404,35 @@ async function loadAllData(){
     console.log('Dados carregados do Firestore:', Object.keys(cache));
 }
 
+function getCurrentPage(){
+    const active=document.querySelector('.page.active');
+    return active?active.id.replace('page-',''):'home';
+}
+
+function refreshCurrentPage(){
+    const p=getCurrentPage();
+    if(p==='home')renderHome();
+    if(p==='oportunidades')filtrarOportunidades();
+    if(p==='admin')renderAdmin();
+    if(p==='inst_dashboard')renderInstDashboard();
+    if(p==='vol_dashboard')renderVolDashboard();
+}
+
+const ALL_KEYS=['users','instituicoes','voluntarios','oportunidades','inscricoes'];
+
 async function loadAllDataWithListeners(){
     await loadAllData();
-    Object.keys(cache).forEach(k=>{
+    ALL_KEYS.forEach(k=>{
+        if(!cache[k])cache[k]=[];
         db.collection('dados').doc(k).onSnapshot(doc=>{
-            if(doc.exists) cache[k] = doc.data().data || [];
+            if(doc.exists){
+                const old=JSON.stringify(cache[k]);
+                const fresh=JSON.stringify(doc.data().data||[]);
+                if(old!==fresh){
+                    cache[k]=doc.data().data||[];
+                    refreshCurrentPage();
+                }
+            }
         });
     });
 }
@@ -493,7 +516,7 @@ function updateNav(){
 }
 
 function renderHome(){
-    const ops=getData('oportunidades').filter(o=>['publicado','inscricoes_abertas'].includes(o.estado));
+    const ops=getData('oportunidades').filter(o=>['publicado','inscricoes_abertas','rascunho','aceite'].includes(o.estado));
     const insts=getData('instituicoes');
     const vols=getData('voluntarios');
     document.getElementById('statOportunidades').textContent=ops.length;
@@ -535,7 +558,7 @@ function filtrarOportunidades(){
     const q=(document.getElementById('pesqQ').value||'').toLowerCase();
     const cat=document.getElementById('pesqCat').value;
     const loc=(document.getElementById('pesqLoc').value||'').toLowerCase();
-    let ops=getData('oportunidades').filter(o=>['publicado','inscricoes_abertas'].includes(o.estado));
+    let ops=getData('oportunidades').filter(o=>['publicado','inscricoes_abertas','rascunho','aceite'].includes(o.estado));
     if(q) ops=ops.filter(o=>o.titulo.toLowerCase().includes(q)||(o.descricao||'').toLowerCase().includes(q));
     if(cat) ops=ops.filter(o=>o.categoriaId==cat);
     if(loc) ops=ops.filter(o=>(o.local||'').toLowerCase().includes(loc)||(o.freguesia||'').toLowerCase().includes(loc));
@@ -543,8 +566,11 @@ function filtrarOportunidades(){
     const catMap=Object.fromEntries(CATEGORIAS.map(c=>[c.id,c.nome]));
     const insts=getData('instituicoes');
     const instMap=Object.fromEntries(insts.map(i=>[i.id,i.nome]));
+    const inscricoes=getData('inscricoes');
+    const vol=currentUser?getVolByUserId(currentUser.id):null;
     let html='';
     ops.forEach(o=>{
+        const estaInscrito=vol?inscricoes.some(i=>i.oportunidadeId===o.id&&i.voluntarioId===vol.id):false;
         html+='<div class="col-md-6 mb-4"><div class="card h-100">'+
             '<div class="card-body">'+
                 '<span class="badge bg-primary mb-2">'+(catMap[o.categoriaId]||'')+'</span>'+
@@ -556,7 +582,7 @@ function filtrarOportunidades(){
             '</div>'+
             '<div class="card-footer bg-transparent d-flex justify-content-between">'+
                 '<a href="#" class="btn btn-outline-primary btn-sm" onclick="verDetalhe('+o.id+')">Ver Detalhes</a>'+
-                '<span class="badge bg-success">'+o.vagas+' vaga(s)</span>'+
+                (estaInscrito?'<button class="btn btn-outline-danger btn-sm" onclick="desinscrever('+o.id+');filtrarOportunidades()"><i class="bi bi-x-circle"></i> Remover</button>':'<span class="badge bg-success">'+o.vagas+' vaga(s)</span>')+
             '</div>'+
         '</div></div>';
     });
@@ -636,6 +662,17 @@ function verDetalhe(id){
             '<p class="text-muted small">A sua inscrição está registada nesta oportunidade.</p>'+
             '<button class="btn btn-outline-danger w-100" onclick="desinscrever('+o.id+')">'+
             '<i class="bi bi-x-circle"></i> Cancelar Inscrição</button>'+
+        '</div></div>';
+    }
+
+    const podeEliminar=currentUser&&(
+        currentUser.perfil==='administrador'||
+        (currentUser.perfil==='instituicao'&&inst&&inst.userId===currentUser.id)
+    );
+    if(podeEliminar){
+        html+='<div class="card border-danger mt-3"><div class="card-body text-center">'+
+            '<button class="btn btn-danger w-100" onclick="eliminarOportunidade('+o.id+');showPage(\'oportunidades\')">'+
+            '<i class="bi bi-trash"></i> Eliminar Oportunidade</button>'+
         '</div></div>';
     }
 
@@ -790,10 +827,13 @@ function renderAdmin(){
     const inscricoes=getData('inscricoes');
     const users=getData('users');
     const vols=getData('voluntarios');
+    const opsAtivas=ops.filter(o=>['publicado','inscricoes_abertas','rascunho'].includes(o.estado));
+    const opsConcluidasCount=ops.filter(o=>o.estado==='concluida').length;
+    const opsAceitesCount=ops.filter(o=>o.estado==='aceite').length;
 
-    let statsHtml='<div class="col-md-3 mb-3"><div class="card stat-card"><i class="bi bi-people text-primary" style="font-size:2rem"></i><h3>'+users.length+'</h3><p class="text-muted">Utilizadores</p></div></div>'+
-        '<div class="col-md-3 mb-3"><div class="card stat-card"><i class="bi bi-hourglass-split text-warning" style="font-size:2rem"></i><h3>'+pendentes.length+'</h3><p class="text-muted">Pendentes</p></div></div>'+
-        '<div class="col-md-3 mb-3"><div class="card stat-card"><i class="bi bi-check-circle text-success" style="font-size:2rem"></i><h3>'+aprovadas.length+'</h3><p class="text-muted">Aprovadas</p></div></div>'+
+    let statsHtml='<div class="col-md-3 mb-3"><div class="card stat-card"><i class="bi bi-megaphone text-primary" style="font-size:2rem"></i><h3>'+opsAtivas.length+'</h3><p class="text-muted">Ativas</p></div></div>'+
+        '<div class="col-md-3 mb-3"><div class="card stat-card"><i class="bi bi-hourglass-split text-warning" style="font-size:2rem"></i><h3>'+opsConcluidasCount+'</h3><p class="text-muted">Concluídas</p></div></div>'+
+        '<div class="col-md-3 mb-3"><div class="card stat-card"><i class="bi bi-check-circle text-success" style="font-size:2rem"></i><h3>'+opsAceitesCount+'</h3><p class="text-muted">Aceites</p></div></div>'+
         '<div class="col-md-3 mb-3"><div class="card stat-card"><i class="bi bi-journal-check text-info" style="font-size:2rem"></i><h3>'+inscricoes.length+'</h3><p class="text-muted">Inscrições</p></div></div>';
     document.getElementById('adminStats').innerHTML=statsHtml;
 
@@ -963,9 +1003,9 @@ function showCriarOportunidade(){
             '<input type="number" class="form-control" id="newVagas" value="1" min="1"></div>'+
             '<div class="col-md-3"><label class="form-label">Estado</label>'+
             '<select class="form-select" id="newEstado" disabled>'+
-                '<option value="rascunho" selected>Rascunho (Pendente de Aprovação)</option>'+
+                '<option value="inscricoes_abertas" selected>Inscrições Abertas</option>'+
             '</select></div>'+
-            '<div class="col-12"><div class="alert alert-info mb-0"><i class="bi bi-info-circle"></i> A oportunidade será submetida para aprovação do administrador. Só após aprovação ficará visível aos voluntários.</div></div>'+
+            '<div class="col-12"><div class="alert alert-info mb-0"><i class="bi bi-info-circle"></i> A oportunidade será publicada imediatamente e ficará visível aos voluntários.</div></div>'+
             '<div class="col-md-6"><label class="form-label">Requisitos</label>'+
             '<textarea class="form-control" id="newRequisitos" rows="2"></textarea></div>'+
             '<div class="col-md-6"><label class="form-label">Competências</label>'+
@@ -999,11 +1039,11 @@ function criarOportunidade(e){
         requisitos:document.getElementById('criarRequisitos').value.trim(),
         competências:document.getElementById('criarComp').value.trim(),
         idadeMinima:parseInt(document.getElementById('criarIdadeMin').value)||null,
-        estado:'rascunho',
+        estado:'inscricoes_abertas',
         criadaEm:new Date().toISOString()
     });
     setData('oportunidades',ops);
-    alert('Oportunidade criada! Aguarde aprovação do administrador.');
+    alert('Oportunidade criada e publicada!');
     showPage('inst_dashboard');
 }
 
