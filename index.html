@@ -526,14 +526,7 @@ const CATEGORIAS = [
 async function initDB(){
     let users=getData('users');
     const seedUsers=[
-        {id:1,nome:'Administrador',email:'admin@voluntariado.pt',password_hash:'admin123',perfil:'administrador',ativo:true,data_criacao:'2026-07-13T00:00:00',ultimo_acesso:null},
-        {id:2,nome:'Santa Casa da Misericordia',email:'instituicao@email.pt',password_hash:'inst123',perfil:'instituicao',ativo:true,data_criacao:'2026-07-13T00:00:00',ultimo_acesso:null},
-        {id:3,nome:'Maria Santos',email:'voluntario@email.pt',password_hash:'vol123',perfil:'voluntario',ativo:true,data_criacao:'2026-07-13T00:00:00',ultimo_acesso:null},
-        {id:5,nome:'Agrupamento de Escolas de Boticas',email:'escolas@email.pt',password_hash:'esc123',perfil:'instituicao',ativo:true,data_criacao:'2026-07-13T00:00:00',ultimo_acesso:null},
-        {id:6,nome:'Municipio de Boticas',email:'municipio@email.pt',password_hash:'mun123',perfil:'instituicao',ativo:true,data_criacao:'2026-07-13T00:00:00',ultimo_acesso:null},
-        {id:7,nome:'Associacao Cultural de Boticas',email:'cultural@email.pt',password_hash:'cul123',perfil:'instituicao',ativo:true,data_criacao:'2026-07-13T00:00:00',ultimo_acesso:null},
-        {id:8,nome:'GD Boticas',email:'desportivo@email.pt',password_hash:'des123',perfil:'instituicao',ativo:true,data_criacao:'2026-07-13T00:00:00',ultimo_acesso:null},
-        {id:9,nome:'Ana Rodrigues',email:'ana@email.pt',password_hash:'vol123',perfil:'voluntario',ativo:true,data_criacao:'2026-07-13T00:00:00',ultimo_acesso:null}
+        {id:1,nome:'Administrador',email:'admin@voluntariado.pt',password_hash:'admin123',perfil:'administrador',ativo:true,data_criacao:'2026-07-13T00:00:00',ultimo_acesso:null}
     ];
     let changed=false;
     seedUsers.forEach(su=>{
@@ -549,36 +542,7 @@ async function initDB(){
         }
     });
     if(changed)setData('users',users);
-    let insts=getData('instituicoes');
-    if(!insts.find(i=>i.userId===2)){
-        insts.push({id:nextId('instituicoes'),userId:2,nome:'Santa Casa da Misericordia',nif:'500000001',tipo:'IPSS',morada:'Rua da Misericordia, Boticas',email:'instituicao@email.pt',telefone:'278600000',pessoaContacto:'Dr. Manuel',descricao:'Instituicao de solidariedade social.',estadoValidacao:'aprovada'});
-        setData('instituicoes',insts);
-    }
-    if(!insts.find(i=>i.userId===5)){
-        insts.push({id:nextId('instituicoes'),userId:5,nome:'Agrupamento de Escolas de Boticas',nif:'500000003',tipo:'Escola',morada:'Rua da Escola, Boticas',email:'escolas@email.pt',telefone:'278600200',pessoaContacto:'Dra. Teresa',descricao:'Agrupamento de escolas do concelho de Boticas.',estadoValidacao:'aprovada'});
-        setData('instituicoes',insts);
-    }
-    if(!insts.find(i=>i.userId===6)){
-        insts.push({id:nextId('instituicoes'),userId:6,nome:'Municipio de Boticas',nif:'500000004',tipo:'Municipio',morada:'Praca do Municipio, Boticas',email:'municipio@email.pt',telefone:'278600300',pessoaContacto:'Dr. Carlos',descricao:'Camara Municipal de Boticas.',estadoValidacao:'aprovada'});
-        setData('instituicoes',insts);
-    }
-    if(!insts.find(i=>i.userId===7)){
-        insts.push({id:nextId('instituicoes'),userId:7,nome:'Associacao Cultural de Boticas',nif:'500000005',tipo:'Associacao',morada:'Rua da Cultura, Boticas',email:'cultural@email.pt',telefone:'278600400',pessoaContacto:'Dra. Sofia',descricao:'Associacao para divulgacao cultural no concelho.',estadoValidacao:'aprovada'});
-        setData('instituicoes',insts);
-    }
-    if(!insts.find(i=>i.userId===8)){
-        insts.push({id:nextId('instituicoes'),userId:8,nome:'GD Boticas',nif:'500000006',tipo:'Clube Desportivo',morada:'Estadio Municipal, Boticas',email:'desportivo@email.pt',telefone:'278600500',pessoaContacto:'Antonio Ferreira',descricao:'Grupo Desportivo e Cultural de Boticas.',estadoValidacao:'aprovada'});
-        setData('instituicoes',insts);
-    }
     let vols=getData('voluntarios');
-    if(!vols.find(v=>v.userId===3)){
-        vols.push({id:nextId('voluntarios'),userId:3,telefone:'912345678',localidade:'Boticas',dataNascimento:'1990-05-15',disponibilidade:'fins_de_semana',interesses:[1,2],competencias:'Primeiro socorro, informatica',consentimentoDados:true,dataConsentimento:'2026-07-13T00:00:00'});
-        setData('voluntarios',vols);
-    }
-    if(!vols.find(v=>v.userId===9)){
-        vols.push({id:nextId('voluntarios'),userId:9,telefone:'963258741',localidade:'Boticas',dataNascimento:'1995-08-20',disponibilidade:'manhas',interesses:[3,4,8],competencias:'Ensino, animacao',consentimentoDados:true,dataConsentimento:'2026-07-13T00:00:00'});
-        setData('voluntarios',vols);
-    }
     let cats=getData('categorias');
     if(!cats.length){
         CATEGORIAS.forEach(c=>{cats.push({id:c.id,nome:c.nome,descricao:c.descricao,ativa:c.ativa});});
@@ -1437,6 +1401,13 @@ function eliminarOportunidade(id){
     const op=ops.find(o=>o.id===id);
     ops=ops.filter(o=>o.id!==id);
     setData('oportunidades',ops);
+    const inscricoes=getData('inscricoes');
+    const relInsc=inscricoes.filter(i=>i.oportunidadeId===id);
+    if(relInsc.length){
+        inscricoes.splice(0,inscricoes.length-relInsc);
+        setData('inscricoes',inscricoes);
+        alert('Oportunidade e as suas inscricoes foram eliminadas.');
+    }
     registarAtividade(currentUser.id,'eliminar_oportunidade','oportunidades',id,'Oportunidade eliminada: '+(op?op.titulo:id));
     renderInstDashboard();
 }
