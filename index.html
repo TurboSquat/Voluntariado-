@@ -482,7 +482,17 @@ function getCurrentPage(){
     return active?active.id.replace('page-',''):'home';
 }
 
+function refreshStats(){
+    const el1=document.getElementById('statVoluntarios');
+    const el2=document.getElementById('statInstituicoes');
+    const el3=document.getElementById('statOportunidades');
+    if(el1)el1.textContent=getData('voluntarios').length;
+    if(el2)el2.textContent=getData('instituicoes').length;
+    if(el3)el3.textContent=getData('oportunidades').length;
+}
+
 function refreshCurrentPage(){
+    refreshStats();
     const p=getCurrentPage();
     if(p==='home')renderHome();
     if(p==='oportunidades')filtrarOportunidades();
@@ -493,18 +503,19 @@ function refreshCurrentPage(){
 
 const ALL_KEYS=['users','instituicoes','voluntarios','oportunidades','inscricoes','categorias','registosAtividade'];
 
+function setData(k,d){
+    cache[k] = d;
+    db.collection('dados').doc(k).set({data: JSON.parse(JSON.stringify(d))}).catch(e=>console.error('Erro ao guardar:',k,e));
+}
+
 async function loadAllDataWithListeners(){
     await loadAllData();
     ALL_KEYS.forEach(k=>{
         if(!cache[k])cache[k]=[];
         db.collection('dados').doc(k).onSnapshot(doc=>{
             if(doc.exists){
-                const old=JSON.stringify(cache[k]);
-                const fresh=JSON.stringify(doc.data().data||[]);
-                if(old!==fresh){
-                    cache[k]=doc.data().data||[];
-                    refreshCurrentPage();
-                }
+                cache[k]=doc.data().data||[];
+                refreshCurrentPage();
             }
         });
     });
@@ -542,27 +553,10 @@ async function initDB(){
         }
     });
     if(changed)setData('users',users);
-    let vols=getData('voluntarios');
     let cats=getData('categorias');
     if(!cats.length){
         CATEGORIAS.forEach(c=>{cats.push({id:c.id,nome:c.nome,descricao:c.descricao,ativa:c.ativa});});
         setData('categorias',cats);
-    }
-    let ops=getData('oportunidades');
-    if(!ops.length){
-        ops.push(
-            {id:nextId('oportunidades'),instituicaoId:1,categoriaId:1,titulo:'Apoio a familias carenciadas',descricao:'Distribuicao de alimentacao e vestuario a familias necessitadas na regiao de Boticas.',local:'Boticas',freguesia:'Boticas',horario:'Seg-Sex 9h-12h',dataInicio:'2026-08-01',dataFim:'2026-12-31',vagas:5,requisitos:'Maior de 18 anos',competencias:'Empatia, comunicacao',idadeMinima:18,estado:'inscricoes_abertas',criadaEm:new Date().toISOString(),publicadaEm:new Date().toISOString()},
-            {id:nextId('oportunidades'),instituicaoId:1,categoriaId:7,titulo:'Visitas a idosos isolados',descricao:'Acompanhamento semanal a pessoas idosas que vivem sozinhas.',local:'Boticas',freguesia:'Vilar de Cima',horario:'Ter e Qui 14h-17h',dataInicio:'2026-08-15',dataFim:'2026-11-30',vagas:3,requisitos:'Paciencia e disponibilidade',competencias:'Escuta ativa',idadeMinima:16,estado:'inscricoes_abertas',criadaEm:new Date().toISOString(),publicadaEm:new Date().toISOString()},
-            {id:nextId('oportunidades'),instituicaoId:3,categoriaId:4,titulo:'Apoio em evento cultural',descricao:'Apoio a organizacao do Festival Cultural de Boticas.',local:'Boticas',freguesia:'Boticas',horario:'Sab-Dom 10h-18h',dataInicio:'2026-09-20',dataFim:'2026-09-21',vagas:10,requisitos:'Disponibilidade no fim de semana',competencias:'Organizacao, trabalho em equipa',idadeMinima:14,estado:'inscricoes_abertas',criadaEm:new Date().toISOString(),publicadaEm:new Date().toISOString()},
-            {id:nextId('oportunidades'),instituicaoId:3,categoriaId:4,titulo:'Recolha de bens alimentares',descricao:'Recolha e organizacao de donativos alimentares para cabazes solidarios.',local:'Boticas',freguesia:'Boticas',horario:'Seg-Sex 9h-17h',dataInicio:'2026-10-01',dataFim:'2026-12-20',vagas:6,requisitos:'Nenhum',competencias:'Organizacao, logistica',idadeMinima:14,estado:'inscricoes_abertas',criadaEm:new Date().toISOString(),publicadaEm:new Date().toISOString()},
-            {id:nextId('oportunidades'),instituicaoId:4,categoriaId:3,titulo:'Apoio em atividades educativas',descricao:'Apoio a atividades extraescolares no Agrupamento de Escolas.',local:'Boticas',freguesia:'Boticas',horario:'Seg-Qui 15h-17h',dataInicio:'2026-09-15',dataFim:'2027-06-15',vagas:4,requisitos:'Ensino superior ou estudante universitario',competencias:'Ensino, comunicacao',idadeMinima:18,estado:'inscricoes_abertas',criadaEm:new Date().toISOString(),publicadaEm:new Date().toISOString()},
-            {id:nextId('oportunidades'),instituicaoId:2,categoriaId:1,titulo:'Distribuicao de cabazes natalicios',descricao:'Montagem e distribuicao de cabazes de Natal a familias carenciadas.',local:'Boticas',freguesia:'Boticas',horario:'Seg-Sex 9h-12h',dataInicio:'2026-12-01',dataFim:'2026-12-23',vagas:8,requisitos:'Maior de 16 anos',competencias:'Organizacao, fisico',idadeMinima:16,estado:'inscricoes_abertas',criadaEm:new Date().toISOString(),publicadaEm:new Date().toISOString()},
-            {id:nextId('oportunidades'),instituicaoId:5,categoriaId:2,titulo:'Limpeza de espaco verde',descricao:'Limpeza e manutencao do Parque Municipal de Boticas.',local:'Boticas',freguesia:'Boticas',horario:'Sab 9h-12h',dataInicio:'2026-08-10',dataFim:'2026-11-30',vagas:12,requisitos:'Vestuario adequado',competencias:'Trabalho fisico',idadeMinima:14,estado:'inscricoes_abertas',criadaEm:new Date().toISOString(),publicadaEm:new Date().toISOString()},
-            {id:nextId('oportunidades'),instituicaoId:5,categoriaId:1,titulo:'Apoio administrativo pontual',descricao:'Apoio em tarefas administrativas na Camara Municipal.',local:'Boticas',freguesia:'Boticas',horario:'Seg-Sex 9h-12h',dataInicio:'2026-08-01',dataFim:'2026-10-31',vagas:2,requisitos:'Conhecimentos informaticos',competencias:'Informatica, organizacao',idadeMinima:18,estado:'inscricoes_abertas',criadaEm:new Date().toISOString(),publicadaEm:new Date().toISOString()},
-            {id:nextId('oportunidades'),instituicaoId:6,categoriaId:5,titulo:'Apoio logistico em prova desportiva',descricao:'Apoio na organizacao da Corrida de Sao Mamede.',local:'Boticas',freguesia:'Boticas',horario:'Dom 8h-14h',dataInicio:'2026-10-12',dataFim:'2026-10-12',vagas:15,requisitos:'Disponibilidade',competencias:'Organizacao, logistica',idadeMinima:14,estado:'inscricoes_abertas',criadaEm:new Date().toISOString(),publicadaEm:new Date().toISOString()},
-            {id:nextId('oportunidades'),instituicaoId:6,categoriaId:2,titulo:'Limpeza de espaco verde',descricao:'Apoio na limpeza de trilhos e percursos pedestres.',local:'Boticas',freguesia:'Vilar de Cima',horario:'Sab 9h-13h',dataInicio:'2026-09-01',dataFim:'2026-11-30',vagas:8,requisitos:'Vestuario adequado',competencias:'Trabalho fisico',idadeMinima:14,estado:'inscricoes_abertas',criadaEm:new Date().toISOString(),publicadaEm:new Date().toISOString()}
-        );
-        setData('oportunidades',ops);
     }
 }
 
@@ -1399,16 +1393,13 @@ function eliminarOportunidade(id){
     if(!confirm('Eliminar esta oportunidade?'))return;
     let ops=getData('oportunidades');
     const op=ops.find(o=>o.id===id);
+    if(!op){alert('Oportunidade não encontrada.');return;}
     ops=ops.filter(o=>o.id!==id);
     setData('oportunidades',ops);
-    const inscricoes=getData('inscricoes');
-    const relInsc=inscricoes.filter(i=>i.oportunidadeId===id);
-    if(relInsc.length){
-        inscricoes.splice(0,inscricoes.length-relInsc);
-        setData('inscricoes',inscricoes);
-        alert('Oportunidade e as suas inscricoes foram eliminadas.');
-    }
-    registarAtividade(currentUser.id,'eliminar_oportunidade','oportunidades',id,'Oportunidade eliminada: '+(op?op.titulo:id));
+    let inscricoes=getData('inscricoes');
+    inscricoes=inscricoes.filter(i=>i.oportunidadeId!==id);
+    setData('inscricoes',inscricoes);
+    registarAtividade(currentUser.id,'eliminar_oportunidade','oportunidades',id,'Oportunidade eliminada: '+op.titulo);
     renderInstDashboard();
 }
 
