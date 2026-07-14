@@ -172,7 +172,6 @@
                     <button type="submit" class="btn btn-pri" style="width:100%">Entrar</button>
                 </form>
                 <p style="text-align:center;margin-top:16px;font-size:.85rem;color:var(--txt2)">Nao tem conta? <a href="#" onclick="showPage('registo')" style="color:var(--pri);font-weight:600">Registar</a></p>
-                <p style="text-align:center;margin-top:8px"><a href="#" onclick="resetFirestore()" style="font-size:.75rem;color:var(--err);text-decoration:underline">Limpar dados e recomecar</a></p>
             </div>
         </div>
     </div>
@@ -198,7 +197,7 @@
                         <div style="margin-bottom:12px"><label class="form-label">Nome completo *</label><input type="text" class="form-control" id="regNome" required></div>
                         <div class="form-row form-row-2" style="margin-bottom:12px">
                             <div><label class="form-label">Email *</label><input type="email" class="form-control" id="regEmail" required></div>
-                            <div><label class="form-label">Telefone *</label><input type="tel" class="form-control" id="regTelefone" required></div>
+                            <div><label class="form-label">Telefone *</label><div class="input-group"><span class="input-group-text">+351</span><input type="tel" class="form-control" id="regTelefone" placeholder="9XXXXXXXX" required oninput="this.value=this.value.replace(/[^0-9]/g,'').substring(0,9)"></div></div>
                         </div>
                         <div class="form-row form-row-2" style="margin-bottom:12px">
                             <div><label class="form-label">Freguesia / Localidade *</label><input type="text" class="form-control" id="regLocalidade" required></div>
@@ -214,10 +213,41 @@
                                 <option value="flexivel">Flexivel</option>
                             </select>
                         </div>
-                        <div style="margin-bottom:12px"><label class="form-label">Areas de interesse</label>
-                            <div class="row" id="regInteresses"></div>
+                        <div style="margin-bottom:12px">
+                            <label class="form-label">Áreas de interesse</label>
+                            <select class="form-select" id="regInteresses">
+                                <option value="">Selecionar...</option>
+                                <option value="1">Saude</option>
+                                <option value="2">Educacao</option>
+                                <option value="3">Ambiente</option>
+                                <option value="4">Animais</option>
+                                <option value="5">Solidariedade Social</option>
+                                <option value="6">Cultura</option>
+                                <option value="7">Desporto</option>
+                                <option value="8">Tecnologia</option>
+                            </select>
                         </div>
-                        <div style="margin-bottom:12px"><label class="form-label">Competencias</label><input type="text" class="form-control" id="regCompetencias" placeholder="ex: primeiro socorro, informatica..."></div>
+                        <div style="margin-bottom:12px"><label class="form-label">Competencias</label>
+                            <select class="form-select" id="regCompetencias">
+                                <option value="">Selecionar...</option>
+                                <option value="Primeiro Socorro">Primeiro Socorro</option>
+                                <option value="Informatica">Informatica</option>
+                                <option value="Comunicacao">Comunicacao</option>
+                                <option value="Trabalho em Equipa">Trabalho em Equipa</option>
+                                <option value="Lideranca">Lideranca</option>
+                                <option value="Organizacao">Organizacao</option>
+                                <option value="Paciencia">Paciencia</option>
+                                <option value="Criatividade">Criatividade</option>
+                                <option value="Empatia">Empatia</option>
+                                <option value="Idiomas">Idiomas</option>
+                                <option value="Conducao">Conducao</option>
+                                <option value="Culinaria">Culinaria</option>
+                                <option value="Musica">Musica</option>
+                                <option value="Desenho">Desenho</option>
+                                <option value="Fotografia">Fotografia</option>
+                                <option value="Ensino">Ensino</option>
+                            </select>
+                        </div>
                         <div class="form-row form-row-2" style="margin-bottom:12px">
                             <div><label class="form-label">Password *</label><input type="password" class="form-control" id="regPass" required minlength="6"></div>
                             <div><label class="form-label">Confirmar *</label><input type="password" class="form-control" id="regPass2" required></div>
@@ -227,10 +257,10 @@
                         <div style="margin-bottom:16px"><div class="form-check"><input class="form-check-input" type="checkbox" id="regTermos" required><label class="form-check-label" for="regTermos">Aceito os Termos de Utilizacao *</label></div></div>
                     </div>
 
-                    <div id="camposInstReg" style="display:none">
+                     <div id="camposInstReg" style="display:none">
                         <div style="margin-bottom:12px"><label class="form-label">Nome da Instituicao *</label><input type="text" class="form-control" id="regNomeInst"></div>
                         <div class="form-row form-row-2" style="margin-bottom:12px">
-                            <div><label class="form-label">NIF *</label><input type="text" class="form-control" id="regNif" maxlength="9"></div>
+                            <div><label class="form-label">NIF *</label><input type="text" class="form-control" id="regNif" maxlength="9" oninput="this.value=this.value.replace(/[^0-9]/g,'').substring(0,9)"></div>
                             <div><label class="form-label">Tipo *</label>
                                 <select class="form-select" id="regTipoInst">
                                     <option value="">Selecionar...</option>
@@ -242,8 +272,8 @@
                         </div>
                         <div style="margin-bottom:12px"><label class="form-label">Email *</label><input type="email" class="form-control" id="regEmailInst"></div>
                         <div class="form-row form-row-2" style="margin-bottom:12px">
-                            <div><label class="form-label">Telefone</label><input type="tel" class="form-control" id="regTelefoneInst"></div>
-                            <div><label class="form-label">Pessoa de Contacto</label><input type="text" class="form-control" id="regContacto"></div>
+                            <div><label class="form-label">Telefone</label><div class="input-group"><span class="input-group-text">+351</span><input type="tel" class="form-control" id="regTelefoneInst" placeholder="9XXXXXXXX" oninput="this.value=this.value.replace(/[^0-9]/g,'').substring(0,9)"></div></div>
+                            <div><label class="form-label">Pessoa de Contacto</label><input type="text" class="form-control" id="regContacto" oninput="this.value=this.value.replace(/[0-9]/g,'')"></div>
                         </div>
                         <div style="margin-bottom:12px"><label class="form-label">Morada</label><input type="text" class="form-control" id="regMorada"></div>
                         <div style="margin-bottom:12px"><label class="form-label">Descricao</label><textarea class="form-control" id="regDescInst" rows="2"></textarea></div>
@@ -288,6 +318,209 @@
         <div class="card" style="padding:24px">
             <h5 style="color:var(--pri);margin-bottom:8px">Contacto</h5>
             <p>Para duvidas ou sugestoes, entre em contacto connosco atraves da area de administracao da plataforma.</p>
+        </div>
+    </div>
+</div>
+
+<!-- DOCUMENTACAO -->
+<div id="page-documentacao" class="page">
+    <div class="container" style="padding:32px 16px;max-width:800px">
+        <h2 class="section-title"><i class="bi bi-book"></i> Documentacao</h2>
+
+        <ul class="nav nav-tabs mb-4">
+            <li class="nav-item"><a class="nav-link active" href="#" id="docTabManuais" onclick="showDocTab('manuais')">Manuais</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" id="docTabDivisao" onclick="showDocTab('divisao')">Divisao de Trabalho</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" id="docTabMVP" onclick="showDocTab('mvp')">MVP</a></li>
+        </ul>
+
+        <div id="docConteudoManuais">
+
+        <div class="card" style="padding:24px;margin-bottom:16px">
+            <h5 style="color:var(--pri);margin-bottom:12px">1. Apresentacao do Projeto</h5>
+            <p>A <strong>Plataforma de Voluntariado Local</strong> e uma aplicacao web que permite a cidadaos e instituicoes da comunidade de Boticas gerir oportunidades de voluntariado.</p>
+            <p><strong>Objetivos:</strong></p>
+            <ul>
+                <li>Facilitar a ligacao entre voluntarios e instituicoes locais</li>
+                <li>Gerir oportunidades de voluntariado de forma simples e transparente</li>
+                <li>Garantir a seguranca e protecao dos dados pessoais (RGPD)</li>
+                <li>Permitir ao administrador supervisionar toda a atividade</li>
+            </ul>
+        </div>
+
+        <div class="card" style="padding:24px;margin-bottom:16px">
+            <h5 style="color:var(--pri);margin-bottom:12px">2. Manual de Instalacao</h5>
+            <p><strong>Requisitos:</strong> Navegador web moderno + acesso a Internet</p>
+            <p><strong>Dados de acesso iniciais:</strong></p>
+            <ul>
+                <li>Email: <code>admin@voluntariado.pt</code></li>
+                <li>Password: <code>admin123</code></li>
+            </ul>
+            <p><strong>Passos:</strong></p>
+            <ol>
+                <li>Aceder a <code>https://turbosquat.github.io/Voluntariado-/</code></li>
+                <li>Fazer login com as credenciais de administrador</li>
+                <li>Alterar a password apos o primeiro login</li>
+            </ol>
+        </div>
+
+        <div class="card" style="padding:24px;margin-bottom:16px">
+            <h5 style="color:var(--pri);margin-bottom:12px">3. Manual de Utilizador</h5>
+            <h6 style="font-weight:600;margin-top:12px">Voluntario</h6>
+            <ul>
+                <li><strong>Registo:</strong> Preencher nome, email, password, telefone, localidade, interesses e aceitar RGPD</li>
+                <li><strong>Oportunidades:</strong> Explorar por categoria, local ou data</li>
+                <li><strong>Inscricao:</strong> Inscrever-se em oportunidades abertas</li>
+                <li><strong>Cancelar:</strong> Remover inscricao antes da conclusao</li>
+            </ul>
+            <h6 style="font-weight:600;margin-top:12px">Instituicao</h6>
+            <ul>
+                <li><strong>Registo:</strong> Preencher nome, NIF, email, password, tipo, morada, telefone</li>
+                <li><strong>Aprovacao:</strong> Conta precisa de aprovacao do administrador</li>
+                <li><strong>Publicar:</strong> Criar oportunidades de voluntariado</li>
+                <li><strong>Gerir:</strong> Editar, concluir ou eliminar oportunidades</li>
+            </ul>
+            <h6 style="font-weight:600;margin-top:12px">Administrador</h6>
+            <ul>
+                <li><strong>Dashboard:</strong> Estatisticas gerais da plataforma</li>
+                <li><strong>Instituicoes:</strong> Aprovar ou rejeitar novas contas</li>
+                <li><strong>Oportunidades:</strong> Aceitar ou rejeitar conclusoes</li>
+                <li><strong>Inscricoes:</strong> Gerir inscricoes de voluntarios</li>
+                <li><strong>Categorias:</strong> Adicionar ou eliminar categorias</li>
+                <li><strong>Utilizadores:</strong> Ver e eliminar contas</li>
+                <li><strong>Relatorios:</strong> Estatisticas detalhadas e atividade recente</li>
+            </ul>
+        </div>
+
+        <div class="card" style="padding:24px;margin-bottom:16px">
+            <h5 style="color:var(--pri);margin-bottom:12px">4. Documentacao Tecnica</h5>
+            <ul>
+                <li><strong>Arquitetura:</strong> SPA de ficheiro unico (HTML + CSS + JS)</li>
+                <li><strong>Frontend:</strong> Bootstrap 5 + JavaScript vanilla</li>
+                <li><strong>Backend:</strong> Firebase Firestore (BaaS)</li>
+                <li><strong>Auth:</strong> SHA-256 via crypto.subtle</li>
+                <li><strong>Hosting:</strong> GitHub Pages</li>
+            </ul>
+            <p><strong>Base de dados Firestore (colecao "dados"):</strong></p>
+            <table class="table table-sm" style="font-size:.85rem;margin-top:8px">
+                <thead><tr><th>Documento</th><th>Descricao</th></tr></thead>
+                <tbody>
+                    <tr><td><code>users</code></td><td>Utilizadores (admin, voluntarios, instituicoes)</td></tr>
+                    <tr><td><code>voluntarios</code></td><td>Perfis de voluntarios</td></tr>
+                    <tr><td><code>instituicoes</code></td><td>Perfis de instituicoes</td></tr>
+                    <tr><td><code>oportunidades</code></td><td>Oportunidades de voluntariado</td></tr>
+                    <tr><td><code>inscricoes</code></td><td>Inscricoes de voluntarios</td></tr>
+                    <tr><td><code>categorias</code></td><td>Categorias de oportunidades</td></tr>
+                    <tr><td><code>registosAtividade</code></td><td>Logs de atividade</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card" style="padding:24px;margin-bottom:16px">
+            <h5 style="color:var(--pri);margin-bottom:12px">5. Permissoes por Perfil</h5>
+            <table class="table table-sm" style="font-size:.85rem">
+                <thead><tr><th>Perfil</th><th>Acoes</th></tr></thead>
+                <tbody>
+                    <tr><td><span class="badge bg-danger">Administrador</span></td><td>Gerir tudo (instituicoes, oportunidades, inscricoes, categorias, utilizadores, relatorios)</td></tr>
+                    <tr><td><span class="badge bg-primary">Instituicao</span></td><td>Criar/editar/eliminar oportunidades proprias, ver inscritos</td></tr>
+                    <tr><td><span class="badge bg-success">Voluntario</span></td><td>Inscrever-se/cancelar inscricoes, gerir perfil</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card" style="padding:24px;margin-bottom:16px">
+            <h5 style="color:var(--pri);margin-bottom:12px">6. Limitacoes e Melhorias Futuras</h5>
+            <h6 style="font-weight:600">Limitacoes:</h6>
+            <ul>
+                <li>Autenticacao sem recuperacao de password</li>
+                <li>Sem notificacoes por email</li>
+                <li>Sem upload de imagens</li>
+                <li>Sem sistema de avaliacao pos-atividade</li>
+                <li>Firestore em modo de teste (regras abertas)</li>
+                <li>Codigo todo num so ficheiro</li>
+            </ul>
+            <h6 style="font-weight:600;margin-top:12px">Melhorias Sugeridas:</h6>
+            <ul>
+                <li>Recuperacao de password por email</li>
+                <li>Notificacoes automaticas</li>
+                <li>Upload de fotos nas oportunidades</li>
+                <li>Sistema de avaliacao de voluntarios</li>
+                <li>Regras de seguranca Firestore em producao</li>
+                <li>Dividir em multiplos ficheiros</li>
+                <li>PWA (app instalavel no telemovel)</li>
+                <li>Dashboard com graficos interativos</li>
+                <li>Exportar dados em CSV/PDF</li>
+                <li>Suporte multi-idioma</li>
+            </ul>
+        </div>
+
+        <div class="card" style="padding:24px">
+            <h5 style="color:var(--pri);margin-bottom:12px">7. Fluxos Principais</h5>
+            <h6 style="font-weight:600">Registo de Voluntario:</h6>
+            <p>Formulario → Validacao → Hash password → Criar user + perfil → Consentimento RGPD → Login</p>
+            <h6 style="font-weight:600;margin-top:8px">Registo de Instituicao:</h6>
+            <p>Formulario → Validacao → Criar user + perfil (pendente) → Admin aprova → Publicar oportunidades</p>
+            <h6 style="font-weight:600;margin-top:8px">Inscricao:</h6>
+            <p>Voluntario seleciona oportunidade → Preenche dados → Valida vagas/duplicados → Inscrição pendente → Admin/instituicao aprova</p>
+            <h6 style="font-weight:600;margin-top:8px">Conclusao:</h6>
+            <p>Instituicao marca como concluida → Admin aceita ou rejeita → Estado final</p>
+        </div>
+        </div>
+
+        <div id="docConteudoDivisao" style="display:none">
+            <div class="card" style="padding:24px;margin-bottom:16px">
+                <h5 style="color:var(--pri);margin-bottom:12px">Divisao de Trabalho Sugerida</h5>
+                <p>Funcoes acumuladas por um unico estagiario:</p>
+                <h6 style="font-weight:600;margin-top:12px">Backend e base de dados</h6>
+                <ul>
+                    <li>Modelos de dados (7 colecoes Firestore)</li>
+                    <li>Autenticacao (email + SHA-256)</li>
+                    <li>Permissoes por perfil</li>
+                    <li>Regras de negocio</li>
+                    <li>Funcoes de gestao de dados</li>
+                </ul>
+                <h6 style="font-weight:600;margin-top:12px">Frontend/interface</h6>
+                <ul>
+                    <li>Layout com Bootstrap 5</li>
+                    <li>Paginas publicas</li>
+                    <li>Dashboards (admin, instituicao, voluntario)</li>
+                    <li>Formularios</li>
+                    <li>Responsividade</li>
+                </ul>
+                <h6 style="font-weight:600;margin-top:12px">Administracao e relatorios</h6>
+                <ul>
+                    <li>Painel administrativo</li>
+                    <li>Gestao de instituicoes</li>
+                    <li>Categorias</li>
+                    <li>Relatorios</li>
+                    <li>Exportacoes CSV</li>
+                </ul>
+                <h6 style="font-weight:600;margin-top:12px">Testes, documentacao e dados de exemplo</h6>
+                <ul>
+                    <li>Testes funcionais</li>
+                    <li>Dados ficticios</li>
+                    <li>Manual de instalacao</li>
+                    <li>Manual de utilizador</li>
+                    <li>Apresentacao final</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="docConteudoMVP" style="display:none">
+            <div class="card" style="padding:24px;margin-bottom:16px">
+                <h5 style="color:var(--pri);margin-bottom:12px">Produto Minimo Viavel — MVP</h5>
+                <p>O MVP da plataforma inclui obrigatoriamente:</p>
+                <table class="table table-sm" style="font-size:.85rem;margin-top:8px">
+                    <thead><tr><th>Funcionalidade</th><th>Estado</th></tr></thead>
+                    <tbody>
+                        <tr><td>Login/Autenticacao</td><td><span class="badge bg-success">Feito</span></td></tr>
+                        <tr><td>Registo de voluntario</td><td><span class="badge bg-success">Feito</span></td></tr>
+                        <tr><td>Registo de instituicao</td><td><span class="badge bg-success">Feito</span></td></tr>
+                        <tr><td>Publicacao de oportunidades</td><td><span class="badge bg-success">Feito</span></td></tr>
+                        <tr><td>Inscricao de voluntarios</td><td><span class="badge bg-success">Feito</span></td></tr>
+                        <tr><td>Gestao pelo admin</td><td><span class="badge bg-success">Feito</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -406,7 +639,6 @@
     <div class="container" style="padding:24px 16px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px">
             <h2 class="section-title" style="margin:0"><i class="bi bi-building"></i> Minhas Oportunidades</h2>
-            <a class="btn btn-pri" onclick="showPage('criar')"><i class="bi bi-plus-lg"></i> Nova</a>
         </div>
         <div class="table-wrap" id="instOportunidades"></div>
     </div>
@@ -438,7 +670,7 @@
 </main>
 
 <footer>
-    <div class="container"><p style="margin:0">&copy; 2026 Plataforma de Voluntariado Local &nbsp;|&nbsp; <a href="#" onclick="resetDB()" style="color:#94a3b8">Reset Dados</a></p></div>
+    <div class="container"><p style="margin:0">&copy; 2026 Plataforma de Voluntariado Local &nbsp;|&nbsp; <a href="#" onclick="showPage('documentacao')" style="color:#94a3b8">Documentacao</a></p></div>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -492,19 +724,25 @@ function refreshStats(){
 }
 
 function refreshCurrentPage(){
-    refreshStats();
-    const p=getCurrentPage();
-    if(p==='home')renderHome();
-    if(p==='oportunidades')filtrarOportunidades();
-    if(p==='admin')renderAdmin();
-    if(p==='inst_dashboard')renderInstDashboard();
-    if(p==='vol_dashboard')renderVolDashboard();
+    try{
+        refreshStats();
+        const p=getCurrentPage();
+        if(p==='home')renderHome();
+        else if(p==='oportunidades')filtrarOportunidades();
+        else if(p==='admin')renderAdmin();
+        else if(p==='inst_dashboard')renderInstDashboard();
+        else if(p==='vol_dashboard')renderVolDashboard();
+    }catch(e){console.error('Erro no refresh:',e);}
 }
 
 const ALL_KEYS=['users','instituicoes','voluntarios','oportunidades','inscricoes','categorias','registosAtividade'];
 
+const _localKeys=new Set();
+let _ready=false;
 function setData(k,d){
     cache[k] = d;
+    _localKeys.add(k);
+    setTimeout(()=>_localKeys.delete(k),2000);
     db.collection('dados').doc(k).set({data: JSON.parse(JSON.stringify(d))}).catch(e=>console.error('Erro ao guardar:',k,e));
 }
 
@@ -513,10 +751,8 @@ async function loadAllDataWithListeners(){
     ALL_KEYS.forEach(k=>{
         if(!cache[k])cache[k]=[];
         db.collection('dados').doc(k).onSnapshot(doc=>{
-            if(doc.exists){
-                cache[k]=doc.data().data||[];
-                refreshCurrentPage();
-            }
+            if(!_ready||_localKeys.has(k))return;
+            location.reload();
         });
     });
 }
@@ -535,29 +771,65 @@ const CATEGORIAS = [
 ];
 
 async function initDB(){
-    let users=getData('users');
-    const seedUsers=[
-        {id:1,nome:'Administrador',email:'admin@voluntariado.pt',password_hash:'admin123',perfil:'administrador',ativo:true,data_criacao:'2026-07-13T00:00:00',ultimo_acesso:null}
-    ];
-    let changed=false;
-    seedUsers.forEach(su=>{
-        if(!users.find(u=>u.email===su.email)){
-            users.push(su);
-            changed=true;
-        }else{
-            const existing=users.find(u=>u.email===su.email);
-            if(existing.password_hash!==su.password_hash){
-                existing.password_hash=su.password_hash;
-                changed=true;
+    const snapshot=await db.collection('dados').doc('users').get().catch(()=>null);
+    if(snapshot&&snapshot.exists){
+        const users=snapshot.data().data||[];
+        const adminHashed=await hashPassword('admin123');
+        const admin=users.find(u=>u.email==='admin@voluntariado.pt');
+        if(admin&&admin.password_hash!==adminHashed){
+            admin.password_hash=adminHashed;
+            cache['users']=users;
+            _localKeys.add('users');setTimeout(()=>_localKeys.delete('users'),2000);
+            db.collection('dados').doc('users').set({data:JSON.parse(JSON.stringify(users))}).catch(()=>{});
+        }
+        const volsSnapshot=await db.collection('dados').doc('voluntarios').get().catch(()=>null);
+        if(volsSnapshot&&volsSnapshot.exists){
+            const vols=volsSnapshot.data().data||[];
+            const volUsers=users.filter(u=>u.perfil==='voluntario');
+            const cleaned=vols.filter(v=>volUsers.some(u=>u.id===v.userId));
+            if(cleaned.length!==vols.length){
+                cache['voluntarios']=cleaned;
+                _localKeys.add('voluntarios');setTimeout(()=>_localKeys.delete('voluntarios'),2000);
+                db.collection('dados').doc('voluntarios').set({data:JSON.parse(JSON.stringify(cleaned))}).catch(()=>{});
             }
         }
-    });
-    if(changed)setData('users',users);
-    let cats=getData('categorias');
-    if(!cats.length){
-        CATEGORIAS.forEach(c=>{cats.push({id:c.id,nome:c.nome,descricao:c.descricao,ativa:c.ativa});});
-        setData('categorias',cats);
+        for(const k of ['instituicoes','oportunidades','inscricoes','registosAtividade','categorias']){
+            const doc=await db.collection('dados').doc(k).get().catch(()=>null);
+            if(!doc||!doc.exists){
+                if(k==='categorias'){
+                    const c=[];
+                    CATEGORIAS.forEach(x=>c.push({id:x.id,nome:x.nome,descricao:x.descricao,ativa:x.ativa}));
+                    cache[k]=c;
+                }else{
+                    cache[k]=[];
+                }
+                await db.collection('dados').doc(k).set({data:cache[k]}).catch(e=>console.error('Erro ao criar doc:',k,e));
+            }
+        }
+        return;
     }
+    const adminHashed=await hashPassword('admin123');
+    const adminUser={id:1,nome:'Administrador',email:'admin@voluntariado.pt',password_hash:adminHashed,perfil:'administrador',ativo:true,data_criacao:'2026-07-13T00:00:00',ultimo_acesso:null};
+    cache['users']=[adminUser];
+    ALL_KEYS.forEach(k=>{_localKeys.add(k);setTimeout(()=>_localKeys.delete(k),2000);});
+    db.collection('dados').doc('users').set({data:JSON.parse(JSON.stringify([adminUser]))}).catch(()=>{});
+    const cats=[];
+    CATEGORIAS.forEach(c=>{cats.push({id:c.id,nome:c.nome,descricao:c.descricao,ativa:c.ativa});});
+    cache['categorias']=cats;
+    db.collection('dados').doc('categorias').set({data:JSON.parse(JSON.stringify(cats))}).catch(()=>{});
+    ['instituicoes','voluntarios','oportunidades','inscricoes','registosAtividade'].forEach(k=>{
+        cache[k]=[];
+        db.collection('dados').doc(k).set({data:[]}).catch(()=>{});
+    });
+}
+
+function showDocTab(tab){
+    document.getElementById('docConteudoManuais').style.display=tab==='manuais'?'':'none';
+    document.getElementById('docConteudoDivisao').style.display=tab==='divisao'?'':'none';
+    document.getElementById('docConteudoMVP').style.display=tab==='mvp'?'':'none';
+    document.getElementById('docTabManuais').className='nav-link'+(tab==='manuais'?' active':'');
+    document.getElementById('docTabDivisao').className='nav-link'+(tab==='divisao'?' active':'');
+    document.getElementById('docTabMVP').className='nav-link'+(tab==='mvp'?' active':'');
 }
 
 function resetDB(){
@@ -575,6 +847,16 @@ function resetFirestore(){
     });
 }
 
+function resetVoluntarios(){
+    if(!confirm('Eliminar todos os voluntarios?'))return;
+    setData('voluntarios',[]);
+    db.collection('dados').doc('voluntarios').set({data:[]}).catch(()=>{});
+    cache['voluntarios']=[];
+    refreshStats();
+    refreshCurrentPage();
+}
+
+async function hashPassword(p){const enc=new TextEncoder().encode(p);const hash=await crypto.subtle.digest('SHA-256',enc);return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');}
 function getUserByEmail(e){return getData('users').find(u=>u.email===e);}
 function getInstByUserId(uid){return getData('instituicoes').find(i=>i.userId===uid);}
 function getVolByUserId(uid){return getData('voluntarios').find(v=>v.userId===uid);}
@@ -603,7 +885,8 @@ function showPage(p){
     if(p==='admin')renderAdmin();
     if(p==='inst_dashboard')renderInstDashboard();
     if(p==='vol_dashboard')renderVolDashboard();
-    if(p==='registo')carregarInteressesRegisto();
+
+
 }
 
 function updateNav(){
@@ -668,7 +951,7 @@ function filtrarOportunidades(){
     const q=(document.getElementById('pesqQ').value||'').toLowerCase();
     const cat=document.getElementById('pesqCat').value;
     const loc=(document.getElementById('pesqLoc').value||'').toLowerCase();
-    let ops=getData('oportunidades').filter(o=>['publicado','inscricoes_abertas','rascunho','aceite'].includes(o.estado));
+    let ops=getData('oportunidades').filter(o=>['publicado','inscricoes_abertas','aceite'].includes(o.estado));
     if(q) ops=ops.filter(o=>o.titulo.toLowerCase().includes(q)||(o.descricao||'').toLowerCase().includes(q));
     if(cat) ops=ops.filter(o=>o.categoriaId==cat);
     if(loc) ops=ops.filter(o=>(o.local||'').toLowerCase().includes(loc)||(o.freguesia||'').toLowerCase().includes(loc));
@@ -705,20 +988,6 @@ function toggleRegForm(){
     document.getElementById('regTipo').value=tipo;
     document.getElementById('camposInstReg').style.display=tipo==='instituicao'?'':'none';
     document.getElementById('camposVolReg').style.display=tipo==='voluntario'?'':'none';
-}
-
-function carregarInteressesRegisto(){
-    const cats=CATEGORIAS;
-    const el=document.getElementById('regInteresses');
-    if(!el)return;
-    el.innerHTML=cats.map(c=>`
-        <div class="col-md-4 col-6 mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="${c.id}" id="regInt_${c.id}">
-                <label class="form-check-label" for="regInt_${c.id}">${c.nome}</label>
-            </div>
-        </div>
-    `).join('');
 }
 
 function verDetalhe(id){
@@ -840,7 +1109,7 @@ function desinscrever(opId){
     verDetalhe(opId);
 }
 
-function fazerLogin(e){
+async function fazerLogin(e){
     e.preventDefault();
     const email=document.getElementById('loginEmail').value.trim();
     const pass=document.getElementById('loginPass').value;
@@ -849,7 +1118,8 @@ function fazerLogin(e){
     if(!email||!pass){errEl.textContent='Introduza o email e a password para entrar.';errEl.style.display='block';return;}
     const user=getUserByEmail(email);
     if(!user){errEl.textContent='Email nao encontrado. Verifique o email ou crie uma conta.';errEl.style.display='block';return;}
-    if(user.password_hash!==pass){errEl.textContent='Password incorreta. Tente novamente.';errEl.style.display='block';return;}
+    const hashedPass=await hashPassword(pass);
+    if(user.password_hash!==hashedPass){errEl.textContent='Password incorreta. Tente novamente.';errEl.style.display='block';return;}
     user.ultimo_acesso=new Date().toISOString();
     const users=getData('users');
     const idx=users.findIndex(u=>u.id===user.id);
@@ -865,7 +1135,7 @@ function fazerLogin(e){
     else showPage('vol_dashboard');
 }
 
-function fazerRegisto(e){
+async function fazerRegisto(e){
     e.preventDefault();
     const perfil=document.getElementById('regTipo').value;
     const errEl=document.getElementById('regErro');
@@ -879,7 +1149,10 @@ function fazerRegisto(e){
         const pass2=document.getElementById('regPass2Inst').value;
         const tipo=document.getElementById('regTipoInst').value;
         if(!nome||!email||!pass||!nif||!tipo){errEl.textContent='Preencha todos os campos marcados com * (nome, email, NIF, tipo e password).';errEl.style.display='block';return;}
-        if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){errEl.textContent='Introduza um email valido.';errEl.style.display='block';return;}
+        if(/\d/.test(nome)){errEl.textContent='O nome nao pode conter numeros.';errEl.style.display='block';return;}
+        const contacto=document.getElementById('regContacto').value.trim();
+        if(contacto&&/\d/.test(contacto)){errEl.textContent='A pessoa de contacto nao pode conter numeros.';errEl.style.display='block';return;}
+        if(!/^[^\s@]+@(gmail|outlook|hotmail|live|yahoo|icloud|mail)\.com$/.test(email)){errEl.textContent='Introduza um email valido (gmail, outlook, hotmail, yahoo, icloud ou mail).';errEl.style.display='block';return;}
         if(nif.length!==9||!/^\d+$/.test(nif)){errEl.textContent='O NIF deve ter exatamente 9 digitos numericos.';errEl.style.display='block';return;}
         if(pass!==pass2){errEl.textContent='As passwords nao coincidem. Confirme a password.';errEl.style.display='block';return;}
         if(pass.length<6){errEl.textContent='A password deve ter pelo menos 6 caracteres.';errEl.style.display='block';return;}
@@ -888,14 +1161,15 @@ function fazerRegisto(e){
 
         const users=getData('users');
         const newId=nextId('users');
-        users.push({id:newId,nome:nome,email:email,password_hash:pass,perfil:'instituicao',ativo:true,data_criacao:new Date().toISOString(),ultimo_acesso:null});
+        const hashedPassInst=await hashPassword(pass);
+        users.push({id:newId,nome:nome,email:email,password_hash:hashedPassInst,perfil:'instituicao',ativo:true,data_criacao:new Date().toISOString(),ultimo_acesso:null});
         setData('users',users);
 
         const insts=getData('instituicoes');
         insts.push({
             id:nextId('instituicoes'),userId:newId,nome:nome,
             nif:nif,tipo:tipo,morada:document.getElementById('regMorada').value.trim(),email:email,
-            telefone:document.getElementById('regTelefoneInst').value.trim(),
+            telefone:'+351'+document.getElementById('regTelefoneInst').value.trim(),
             pessoaContacto:document.getElementById('regContacto').value.trim(),
             descricao:document.getElementById('regDescInst').value.trim(),
             estadoValidacao:'pendente'
@@ -910,7 +1184,9 @@ function fazerRegisto(e){
         const telefone=document.getElementById('regTelefone').value.trim();
         const localidade=document.getElementById('regLocalidade').value.trim();
         if(!nome||!email||!pass||!telefone||!localidade){errEl.textContent='Preencha todos os campos marcados com * (nome, email, telefone, localidade e password).';errEl.style.display='block';return;}
-        if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){errEl.textContent='Introduza um email valido.';errEl.style.display='block';return;}
+        if(/\d/.test(nome)){errEl.textContent='O nome nao pode conter numeros.';errEl.style.display='block';return;}
+        if(!/^[^\s@]+@(gmail|outlook|hotmail|live|yahoo|icloud|mail)\.com$/.test(email)){errEl.textContent='Introduza um email valido (gmail, outlook, hotmail, yahoo, icloud ou mail).';errEl.style.display='block';return;}
+        if(!/^\d{9}$/.test(telefone)){errEl.textContent='O telefone deve ter exatamente 9 digitos (ex: 912345678).';errEl.style.display='block';return;}
         if(pass!==pass2){errEl.textContent='As passwords nao coincidem. Confirme a password.';errEl.style.display='block';return;}
         if(pass.length<6){errEl.textContent='A password deve ter pelo menos 6 caracteres.';errEl.style.display='block';return;}
         if(getUserByEmail(email)){errEl.textContent='Este email ja esta registado. Faca login ou use outro email.';errEl.style.display='block';return;}
@@ -919,21 +1195,20 @@ function fazerRegisto(e){
 
         const users=getData('users');
         const newId=nextId('users');
-        users.push({id:newId,nome:nome,email:email,password_hash:pass,perfil:'voluntario',ativo:true,data_criacao:new Date().toISOString(),ultimo_acesso:null});
+        const hashedPassVol=await hashPassword(pass);
+        users.push({id:newId,nome:nome,email:email,password_hash:hashedPassVol,perfil:'voluntario',ativo:true,data_criacao:new Date().toISOString(),ultimo_acesso:null});
         setData('users',users);
 
-        const interessesIds=[];
-        document.querySelectorAll('#regInteresses input[type=checkbox]:checked').forEach(cb=>{
-            interessesIds.push(Number(cb.value));
-        });
+        const interessesVal=document.getElementById('regInteresses').value;
+        const interessesIds=interessesVal?[Number(interessesVal)]:[];
 
         const vols=getData('voluntarios');
         vols.push({
             id:nextId('voluntarios'),userId:newId,
-            telefone:telefone,localidade:localidade,
+            telefone:'+351'+telefone,localidade:localidade,
             dataNascimento:document.getElementById('regDataNasc').value||null,
             disponibilidade:document.getElementById('regDisponibilidade').value,
-            competencias:document.getElementById('regCompetencias').value.trim(),
+            competencias:Array.from(document.getElementById('regCompetencias').selectedOptions).map(o=>o.value).join(', '),
             consentimentoDados:true,dataConsentimento:new Date().toISOString(),
             interesses:interessesIds
         });
@@ -1052,15 +1327,21 @@ function aceitarConclusao(id){
     if(o){o.estado='aceite';setData('oportunidades',ops);registarAtividade(currentUser.id,'aceitar_conclusao','oportunidades',id,'Conclusão aceite: '+o.titulo);renderAdmin();alert('Conclusão aceite!');}
 }
 function rejeitarConclusao(id){
-    if(!confirm('Rejeitar conclusão? Oportunidade volta a estar ativa.'))return;
+    if(!confirm('Rejeitar conclusão?'))return;
     const ops=getData('oportunidades');
     const o=ops.find(x=>x.id===id);
-    if(o){o.estado='inscricoes_abertas';setData('oportunidades',ops);registarAtividade(currentUser.id,'rejeitar_conclusao','oportunidades',id,'Conclusão rejeitada: '+o.titulo);renderAdmin();}
+    if(o){o.estado='cancelada';setData('oportunidades',ops);registarAtividade(currentUser.id,'rejeitar_conclusao','oportunidades',id,'Conclusão rejeitada: '+o.titulo);renderAdmin();}
 }
 function aprovarOp(id){
     const ops=getData('oportunidades');
     const o=ops.find(x=>x.id===id);
-    if(o){o.estado='publicado';setData('oportunidades',ops);renderAdmin();alert('Oportunidade aprovada e publicada!');}
+    if(o){o.estado='inscricoes_abertas';o.publicadaEm=new Date().toISOString();setData('oportunidades',ops);renderAdmin();alert('Oportunidade aprovada e publicada!');}
+}
+function rejeitarOp(id){
+    if(!confirm('Rejeitar esta oportunidade?'))return;
+    const ops=getData('oportunidades');
+    const idx=ops.findIndex(x=>x.id===id);
+    if(idx>=0){registarAtividade(currentUser.id,'rejeitar_oportunidade','oportunidades',id,'Oportunidade rejeitada');ops.splice(idx,1);setData('oportunidades',ops);renderAdmin();}
 }
 function rejeitarOp(id){
     if(!confirm('Rejeitar esta oportunidade? (ficará como rascunho)'))return;
@@ -1101,20 +1382,31 @@ function eliminarCategoria(id){
     renderAdminCategorias();
 }
 
+function eliminarUtilizador(uid){
+    if(!confirm('Eliminar este utilizador e todos os seus dados associados?'))return;
+    let users=getData('users').filter(u=>u.id!==uid);
+    setData('users',users);
+    let vols=getData('voluntarios').filter(v=>v.userId!==uid);
+    setData('voluntarios',vols);
+    let insts=getData('instituicoes').filter(i=>i.userId!==uid);
+    setData('instituicoes',insts);
+    renderAdminUtilizadores();
+    refreshStats();
+}
 function renderAdminUtilizadores(){
     const users=getData('users');
     const insts=getData('instituicoes');
     const vols=getData('voluntarios');
     const instMap=Object.fromEntries(insts.map(i=>[i.userId,i]));
     const volMap=Object.fromEntries(vols.map(v=>[v.userId,v]));
-    let html='<table class="table table-hover"><thead><tr><th>ID</th><th>Nome</th><th>Email</th><th>Perfil</th><th>Ativo</th><th>Criado</th><th>Ultimo Acesso</th></tr></thead><tbody>';
+    let html='<table class="table table-hover"><thead><tr><th>ID</th><th>Nome</th><th>Email</th><th>Perfil</th><th>Ativo</th><th>Criado</th><th>Acoes</th></tr></thead><tbody>';
     users.forEach(u=>{
         const ec=u.ativo?'success':'secondary';
         html+='<tr><td>'+u.id+'</td><td>'+u.nome+'</td><td>'+u.email+'</td>'+
             '<td><span class="badge bg-'+(u.perfil==='administrador'?'danger':u.perfil==='instituicao'?'primary':'success')+'">'+u.perfil+'</span></td>'+
             '<td><span class="badge bg-'+ec+'">'+(u.ativo?'Sim':'Nao')+'</span></td>'+
             '<td>'+(u.data_criacao?u.data_criacao.substring(0,10):'')+'</td>'+
-            '<td>'+(u.ultimo_acesso?u.ultimo_acesso.substring(0,10):'Nunca')+'</td></tr>';
+            '<td>'+(u.perfil!=='administrador'?'<button class="btn btn-danger btn-sm" onclick="eliminarUtilizador('+u.id+')"><i class="bi bi-trash"></i></button>':'')+'</td></tr>';
     });
     html+='</tbody></table>';
     document.getElementById('adminUtilizadores').innerHTML=html;
@@ -1309,7 +1601,7 @@ function guardarNovaOportunidade(){
         requisitos:document.getElementById('newRequisitos').value.trim(),
         competências:document.getElementById('newComp').value.trim(),
         idadeMinima:parseInt(document.getElementById('newIdadeMin')?.value)||null,
-        estado:document.getElementById('newEstado').value,
+        estado:'inscricoes_abertas',
         criadaEm:new Date().toISOString(),
         publicadaEm:new Date().toISOString()
     };
@@ -1737,6 +2029,7 @@ document.addEventListener('DOMContentLoaded',async function(){
         console.error('Erro ao conectar Firestore:',e);
     }
     await initDB();
+    _ready=true;
     const saved=localStorage.getItem('currentUser');
     if(saved){
         try{currentUser=JSON.parse(saved);}catch(e){currentUser=null;}
